@@ -8,6 +8,20 @@
         "ORM"
     ],
     "homepage": "https://github.com/cedtanghe/elixir-db",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-stdlib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-dispatcher"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-di"
+        }
+    ],
     "require": {
         "php": ">=5.4",
         "elixir/elixir-stdlib": "~1.0",
