@@ -25,8 +25,8 @@
     ],
     "require": {
         "php": ">=5.4",
-        "elixir/elixir-stdlib": "~1.0",
-        "elixir/elixir-dispatcher": "~1.0"
+        "elixir/elixir-stdlib": "*",
+        "elixir/elixir-dispatcher": "*"
     },
     "require-dev": {
         "phpunit/PHPUnit": "~4.0"
@@ -42,6 +42,6 @@
         }
     },
     "suggest": {
-        "elixir/elixir-di": "~1.0"
+        "elixir/elixir-di": "*"
     }
 }
