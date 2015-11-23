@@ -638,8 +638,8 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         return $this->__debugInfo();
     }
-
-        /**
+    
+    /**
      * @ignore
      */
     public function __debugInfo()

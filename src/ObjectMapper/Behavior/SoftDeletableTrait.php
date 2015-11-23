@@ -98,7 +98,7 @@ trait SoftDeletableTrait
      */
     public function isTrashed()
     {
-        return $this->{$this->getDeletedColumn()} === $this->getIgnoreValue();
+        return $this->{$this->getDeletedColumn()} !== $this->getIgnoreValue();
     }
 
     /**
