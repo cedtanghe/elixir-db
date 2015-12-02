@@ -2,6 +2,7 @@
     "name": "elixir/elixir-db",
     "description": "Component database and ORM",
     "version": "1.0.0",
+	"minimum-stability": "dev",
     "license": "BSD-3-Clause",
     "keywords": [
         "elixir",
