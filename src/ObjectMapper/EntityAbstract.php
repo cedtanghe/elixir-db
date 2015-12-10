@@ -480,11 +480,11 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 {
                     $value = $value->export([], [], $options);
                 } 
-                else if ($v instanceof Collection)
+                else if ($value instanceof Collection)
                 {
                     $value = $this->exportCollection($value, $options);
                 }
-
+                
                 $data[$key] = $value;
                 $data['_class'] = $this->className;
             }
