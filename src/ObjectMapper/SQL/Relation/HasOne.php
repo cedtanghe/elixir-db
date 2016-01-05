@@ -3,12 +3,12 @@
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
 use Elixir\DB\ObjectMapper\RepositoryInterface;
-use Elixir\DB\ObjectMapper\SQL\Relation\BaseAbstract;
+use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class HasOne extends BaseAbstract 
+class HasOne extends RelationAbstract 
 {
     /**
      * @param RepositoryInterface $repository

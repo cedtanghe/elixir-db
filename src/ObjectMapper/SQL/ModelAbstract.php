@@ -2,8 +2,8 @@
 
 namespace Elixir\DB\ObjectMapper\SQL;
 
+use Elixir\DB\ConnectionManager;
 use Elixir\DB\DBInterface;
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\EntityAbstract;
 use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
@@ -12,7 +12,6 @@ use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\Select;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
-use Elixir\DI\ContainerInterface;
 use Elixir\STDLib\StringUtils;
 
 /**
@@ -26,7 +25,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     const DEFAULT_CONNECTION_KEY = 'db.default';
     
     /**
-     * @var ContainerInterface
+     * @var ConnectionManager
      */
     public static $defaultConnectionManager;
     
@@ -41,7 +40,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     protected $enableInitTraits = true;
 
     /**
-     * @var ContainerInterface
+     * @var ConnectionManager
      */
     protected $connectionManager;
 
@@ -127,7 +126,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     /**
      * @see RepositoryInterface::setConnectionManager()
      */
-    public function setConnectionManager(ContainerInterface $value) 
+    public function setConnectionManager(ConnectionManager $value) 
     {
         $this->connectionManager = $value;
         
@@ -611,7 +610,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
                 {
                     $v = $v->export([], [], $options);
                 } 
-                else if ($v instanceof Collection)
+                else if (is_array($v))
                 {
                     $v = $this->exportCollection($v, $options);
                 }

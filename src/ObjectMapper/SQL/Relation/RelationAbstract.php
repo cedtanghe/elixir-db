@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
 use Elixir\DB\ObjectMapper\RelationInterfaceMetas;
@@ -13,7 +12,7 @@ use Elixir\DB\Query\SQL\JoinClause;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-abstract class BaseAbstract implements RelationInterfaceMetas
+abstract class RelationAbstract implements RelationInterfaceMetas
 {
     /**
      * @var string
@@ -93,7 +92,7 @@ abstract class BaseAbstract implements RelationInterfaceMetas
 
     /**
      * @param string $value
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function setForeignKey($value)
     {
@@ -133,7 +132,7 @@ abstract class BaseAbstract implements RelationInterfaceMetas
 
     /**
      * @param string $value
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function setLocalKey($value)
     {
@@ -170,7 +169,7 @@ abstract class BaseAbstract implements RelationInterfaceMetas
 
     /**
      * @param Pivot $pivot
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function withPivot(Pivot $pivot)
     {
@@ -239,7 +238,7 @@ abstract class BaseAbstract implements RelationInterfaceMetas
 
     /**
      * @param callable $criteria
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function addCriteria(callable $criteria)
     {
@@ -265,11 +264,6 @@ abstract class BaseAbstract implements RelationInterfaceMetas
             $options
         );
         
-        if (is_array($value))
-        {
-            $value = new Collection($value);
-        }
-
         $this->related = $value;
         $this->filled = $options['filled'];
     }
@@ -320,7 +314,7 @@ abstract class BaseAbstract implements RelationInterfaceMetas
                 break;
             case self::HAS_MANY:
             case self::BELONGS_TO_MANY:
-                $this->setRelated(new Collection([]), ['filled' => true]);
+                $this->setRelated([], ['filled' => true]);
                 break;
         }
     }
@@ -455,7 +449,7 @@ abstract class BaseAbstract implements RelationInterfaceMetas
                 return $findable->first();
             case self::HAS_MANY:
             case self::BELONGS_TO_MANY:
-                return new Collection($findable->all());
+                return $findable->all();
         }
 
         return null;

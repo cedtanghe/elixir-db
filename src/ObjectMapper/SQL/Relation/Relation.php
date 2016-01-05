@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\RelationInterface;
 
 /**
@@ -47,11 +46,6 @@ class Relation implements RelationInterface
     public function setRelated($value, array $options = []) 
     {
         $options += ['filled' => true];
-        
-        if (is_array($value))
-        {
-            $value = new Collection($value);
-        }
         
         $this->related = $value;
         $this->filled = $options['filled'];

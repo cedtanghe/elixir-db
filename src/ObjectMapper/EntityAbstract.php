@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper;
 
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\EntityEvent;
 use Elixir\Dispatcher\DispatcherTrait;
 use Elixir\STDLib\StringUtils;
@@ -281,11 +280,6 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 throw new \InvalidArgumentException(sprintf('Key "%s" is a not declared property.', $key));
             }
         }
-
-        if (is_array($value)) 
-        {
-            $value = new Collection($value);
-        }
         
         if ($this->isFillable()) 
         {
@@ -373,7 +367,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 }
             }
 
-            if ($value instanceof Collection || is_array($value))
+            if (is_array($value))
             {
                 $value = $this->hydrateCollection($value, $options);
             }
@@ -420,7 +414,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @param array|Collection $data
+     * @param array $data
      * @param array $options
      * @return mixed
      */
@@ -444,7 +438,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
         {
             foreach ($data as $key => &$value)
             {
-                if ($value instanceof Collection || is_array($value))
+                if (is_array($value))
                 {
                     $value = $this->hydrateCollection($value, $options);
                 }
@@ -480,7 +474,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 {
                     $value = $value->export([], [], $options);
                 } 
-                else if ($value instanceof Collection)
+                else if (is_array($value))
                 {
                     $value = $this->exportCollection($value, $options);
                 }
@@ -517,15 +511,15 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @param Collection $data
+     * @param array $data
      * @param array $options
      * @return array
      */
-    protected function exportCollection(Collection $data, $options) 
+    protected function exportCollection(array $data, $options) 
     {
         foreach ($data as $key => &$value) 
         {
-            if ($value instanceof Collection) 
+            if (is_array($value)) 
             {
                 $value = $this->exportCollection($value, $options);
             } 

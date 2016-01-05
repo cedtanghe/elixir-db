@@ -2,9 +2,9 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
+use Elixir\DB\ConnectionManager;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
-use Elixir\DI\ContainerInterface;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -117,13 +117,13 @@ class Pivot
     }
     
     /**
-     * @param ContainerInterface $connectionManager
+     * @param ConnectionManager $connectionManager
      * @param mixed $firstValue
      * @param mixed $secondValue
      * @return boolean
      * @throws \LogicException
      */
-    public function attach(ContainerInterface $connectionManager, $firstValue, $secondValue)
+    public function attach(ConnectionManager $connectionManager, $firstValue, $secondValue)
     {
         $DB = $connectionManager->get('db.write');
         
@@ -161,13 +161,13 @@ class Pivot
     }
     
     /**
-     * @param ContainerInterface $connectionManager
+     * @param ConnectionManager $connectionManager
      * @param mixed $firstValue
      * @param mixed $secondValue
      * @return boolean
      * @throws \LogicException
      */
-    public function detach(ContainerInterface $connectionManager, $firstValue, $secondValue)
+    public function detach(ConnectionManager $connectionManager, $firstValue, $secondValue)
     {
         $DB = $connectionManager->get('db.write');
         
