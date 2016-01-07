@@ -86,7 +86,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 isset($config['hydrate']) ? $config['hydrate'] : $config,
                 [
                     'raw' => true, 
-                    'sync' => true
+                    'sync' => false
                 ]
             );
         }
