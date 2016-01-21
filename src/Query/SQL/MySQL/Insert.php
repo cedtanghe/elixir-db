@@ -46,7 +46,7 @@ class Insert extends BaseInsert
     }
     
     /**
-     * @see BaseInsert::reset()
+     * {@inheritdoc}
      */
     public function reset($part) 
     {
@@ -66,7 +66,7 @@ class Insert extends BaseInsert
     }
     
     /**
-     * @see BaseInsert::get()
+     * {@inheritdoc}
      */
     public function get($part) 
     {
@@ -82,7 +82,7 @@ class Insert extends BaseInsert
     }
     
     /**
-     * @see BaseInsert::merge()
+     * {@inheritdoc}
      */
     public function merge($data, $part) 
     {
@@ -102,7 +102,7 @@ class Insert extends BaseInsert
     }
 
     /**
-     * @see BaseInsert::render()
+     * {@inheritdoc}
      */
     public function render() 
     {
@@ -158,7 +158,7 @@ class Insert extends BaseInsert
     }
 
     /**
-     * @see BaseInsert::renderColumns()
+     * {@inheritdoc}
      */
     protected function renderColumns()
     {
@@ -175,7 +175,7 @@ class Insert extends BaseInsert
     }
 
     /**
-     * @see BaseInsert::renderValues()
+     * {@inheritdoc}
      */
     protected function renderValues()
     {

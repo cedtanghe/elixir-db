@@ -15,7 +15,7 @@ trait OrderTrait
     protected $order = [];
     
     /**
-     * @see OrderTrait::orderBy()
+     * {@inheritdoc}
      */
     public function orderAsc($order)
     {
@@ -23,7 +23,7 @@ trait OrderTrait
     }
     
     /**
-     * @see OrderTrait::orderBy()
+     * {@inheritdoc}
      */
     public function orderDesc($order)
     {

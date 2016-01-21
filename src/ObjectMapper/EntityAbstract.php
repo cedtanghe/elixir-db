@@ -14,7 +14,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     use DispatcherTrait;
     
     /**
-     * @see EntityInterface::factory()
+     * {@inheritdoc}
      */
     public static function factory(array $config = null)
     {
@@ -113,7 +113,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::setIgnoreValue()
+     * {@inheritdoc}
      */
     public function setIgnoreValue($value)
     {
@@ -121,7 +121,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::getIgnoreValue()
+     * {@inheritdoc}
      */
     public function getIgnoreValue()
     {
@@ -145,7 +145,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::getFillableKeys()
+     * {@inheritdoc}
      */
     public function getFillableKeys() 
     {
@@ -153,7 +153,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::getGuardedKeys()
+     * {@inheritdoc}
      */
     public function getGuardedKeys()
     {
@@ -185,7 +185,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::isModified()
+     * {@inheritdoc}
      */
     public function isModified($state = self::SYNC_ALL) 
     {
@@ -194,7 +194,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::getModified()
+     * {@inheritdoc}
      */
     public function getModified($state = self::SYNC_ALL) 
     {
@@ -231,7 +231,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::sync()
+     * {@inheritdoc}
      */
     public function sync($state = self::SYNC_ALL) 
     {
@@ -260,7 +260,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::has()
+     * {@inheritdoc}
      */
     public function has($key) 
     {
@@ -268,7 +268,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::set()
+     * {@inheritdoc}
      * @throws \InvalidArgumentException
      */
     public function set($key, $value) 
@@ -300,7 +300,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::get()
+     * {@inheritdoc}
      */
     public function get($key, $default = null) 
     {
@@ -313,7 +313,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::hydrate()
+     * {@inheritdoc}
      */
     public function hydrate(array $data, array $options = [])
     {
@@ -449,7 +449,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::export()
+     * {@inheritdoc}
      */
     public function export(array $members = [], array $omitMembers = [], array $options = [])
     {

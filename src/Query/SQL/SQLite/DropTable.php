@@ -25,7 +25,7 @@ class DropTable extends BaseDropTable
     }
     
     /**
-     * @see BaseDropTable::reset()
+     * {@inheritdoc}
      */
     public function reset($part) 
     {
@@ -42,7 +42,7 @@ class DropTable extends BaseDropTable
     }
     
     /**
-     * @see BaseDropTable::get()
+     * {@inheritdoc}
      */
     public function get($part) 
     {
@@ -56,7 +56,7 @@ class DropTable extends BaseDropTable
     }
     
     /**
-     * @see BaseDropTable::merge()
+     * {@inheritdoc}
      */
     public function merge($data, $part) 
     {
@@ -73,7 +73,7 @@ class DropTable extends BaseDropTable
     }
 
     /**
-     * @see BaseDropTable::render()
+     * {@inheritdoc}
      */
     public function render() 
     {

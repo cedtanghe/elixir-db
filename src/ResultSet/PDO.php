@@ -64,7 +64,7 @@ class PDO extends ResultSetAbstract
     }
     
     /**
-     * @see ResultSetAbstract::first()
+     * {@inheritdoc}
      */
     public function first()
     {
@@ -72,11 +72,19 @@ class PDO extends ResultSetAbstract
     }
     
     /**
-     * @see ResultSetAbstract::all()
+     * {@inheritdoc}
      */
     public function all()
     {
         return $this->resource->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function column($column = 0)
+    {
+        return $this->resource->fetchColumn($column);
     }
     
     /**

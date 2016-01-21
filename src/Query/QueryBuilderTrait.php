@@ -11,7 +11,7 @@ use Elixir\DB\Query\QueryBuilderInterface;
 trait QueryBuilderTrait
 {
     /**
-     * @see QueryBuilderInterface::createSelect()
+     * {@inheritdoc}
      */
     public function createSelect($table = null) 
     {
@@ -26,7 +26,7 @@ trait QueryBuilderTrait
     }
     
     /**
-     * @see QueryBuilderInterface::createInsert()
+     * {@inheritdoc}
      */
     public function createInsert($table = null)
     {
@@ -41,7 +41,7 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @see QueryBuilderInterface::createDelete()
+     * {@inheritdoc}
      */
     public function createDelete($table = null) 
     {
@@ -56,7 +56,7 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @see QueryBuilderInterface::createUpdate()
+     * {@inheritdoc}
      */
     public function createUpdate($table = null)
     {
@@ -71,7 +71,7 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @see QueryBuilderInterface::createTable()
+     * {@inheritdoc}
      */
     public function createTable($table = null) 
     {
@@ -86,7 +86,7 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @see QueryBuilderInterface::createAlterTable()
+     * {@inheritdoc}
      */
     public function createAlterTable($table = null) 
     {
@@ -101,7 +101,7 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @see QueryBuilderInterface::createDropTable()
+     * {@inheritdoc}
      */
     public function createDropTable($table = null) 
     {
@@ -109,7 +109,7 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @see QueryBuilderInterface::createTruncateTable()
+     * {@inheritdoc}
      */
     public function createTruncateTable($table = null) 
     {

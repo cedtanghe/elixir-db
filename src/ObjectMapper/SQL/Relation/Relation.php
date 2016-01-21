@@ -33,7 +33,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::getType()
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -41,7 +41,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::setRelated()
+     * {@inheritdoc}
      */
     public function setRelated($value, array $options = []) 
     {
@@ -52,7 +52,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::getRelated()
+     * {@inheritdoc}
      */
     public function getRelated()
     {
@@ -60,7 +60,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::isFilled()
+     * {@inheritdoc}
      */
     public function isFilled()
     {
@@ -68,7 +68,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::isFilled()
+     * {@inheritdoc}
      */
     public function load()
     {

@@ -125,7 +125,7 @@ abstract class SQLAbstract implements SQLInterface
     }
     
     /**
-     * @see SQLInterface::setQuoteMethod()
+     * {@inheritdoc}
      */
     public function setQuoteMethod(callable $value) 
     {
@@ -133,7 +133,7 @@ abstract class SQLAbstract implements SQLInterface
     }
 
     /**
-     * @see SQLInterface::getQuoteMethod()
+     * {@inheritdoc}
      */
     public function getQuoteMethod() 
     {
@@ -141,7 +141,7 @@ abstract class SQLAbstract implements SQLInterface
     }
 
     /**
-     * @see SQLInterface::quote()
+     * {@inheritdoc}
      */
     public function quote($param) 
     {
@@ -149,7 +149,7 @@ abstract class SQLAbstract implements SQLInterface
     }
 
     /**
-     * @see SQLInterface::bindValue()
+     * {@inheritdoc}
      */
     public function bindValue($key, $value) 
     {
@@ -157,7 +157,7 @@ abstract class SQLAbstract implements SQLInterface
     }
 
     /**
-     * @see SQLInterface::getBindValues()
+     * {@inheritdoc}
      */
     public function getBindValues() 
     {
@@ -165,7 +165,7 @@ abstract class SQLAbstract implements SQLInterface
     }
 
     /**
-     * @see SQLInterface::assemble()
+     * {@inheritdoc}
      */
     public function assemble($SQL, $param = null)
     {
@@ -248,7 +248,7 @@ abstract class SQLAbstract implements SQLInterface
     }
     
     /**
-     * @see SQLInterface::getQuery()
+     * {@inheritdoc}
      */
     public function getQuery() 
     {

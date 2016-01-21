@@ -8,8 +8,7 @@ namespace Elixir\DB;
 trait DBUtilTrait 
 {
     /**
-     * @see DBInterface::query()
-     * @return array
+     * {@inheritdoc}
      */
     public function select($query, array $bindings = [])
     {
@@ -18,8 +17,7 @@ trait DBUtilTrait
     }
     
     /**
-     * @see DBInterface::query()
-     * @return integer
+     * {@inheritdoc}
      */
     public function insert($query, array $bindings = [])
     {
@@ -28,8 +26,7 @@ trait DBUtilTrait
     }
     
     /**
-     * @see DBInterface::query()
-     * @return integer
+     * {@inheritdoc}
      */
     public function update($query, array $bindings = [])
     {
@@ -38,8 +35,7 @@ trait DBUtilTrait
     }
     
     /**
-     * @see DBInterface::query()
-     * @return integer
+     * {@inheritdoc}
      */
     public function delete($query, array $bindings = [])
     {

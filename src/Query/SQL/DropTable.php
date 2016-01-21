@@ -10,7 +10,7 @@ use Elixir\DB\Query\SQL\SQLAbstract;
 class DropTable extends SQLAbstract
 {
     /**
-     * @see SQLInterface::render()
+     * {@inheritdoc}
      */
     public function render() 
     {

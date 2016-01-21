@@ -63,7 +63,7 @@ class Versionable implements FindableExtensionInterface
     }
 
     /**
-     * @see FindableExtensionInterface::setFindable()
+     * {@inheritdoc}
      */
     public function setFindable(FindableInterface $value) 
     {
@@ -98,7 +98,7 @@ class Versionable implements FindableExtensionInterface
     }
 
     /**
-     * @see FindableExtensionInterface::getRegisteredMethods()
+     * {@inheritdoc}
      */
     public function getRegisteredMethods() 
     {

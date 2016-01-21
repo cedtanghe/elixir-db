@@ -17,7 +17,7 @@ class Update extends BaseUpdate
     use JoinTrait;
     
     /**
-     * @see LimitTrait::reset()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function offset($offset)
@@ -26,7 +26,7 @@ class Update extends BaseUpdate
     }
    
     /**
-     * @see BaseUpdate::reset()
+     * {@inheritdoc}
      */
     public function reset($part) 
     {
@@ -49,7 +49,7 @@ class Update extends BaseUpdate
     }
     
     /**
-     * @see BaseUpdate::get()
+     * {@inheritdoc}
      */
     public function get($part) 
     {
@@ -67,7 +67,7 @@ class Update extends BaseUpdate
     }
     
     /**
-     * @see BaseUpdate::merge()
+     * {@inheritdoc}
      */
     public function merge($data, $part) 
     {
@@ -90,7 +90,7 @@ class Update extends BaseUpdate
     }
    
     /**
-     * @see BaseUpdate::render()
+     * {@inheritdoc}
      */
     public function render()
     {

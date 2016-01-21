@@ -27,7 +27,7 @@ class CreateTable extends BaseCreateTable
     }
     
     /**
-     * @see BaseCreateTable::reset()
+     * {@inheritdoc}
      */
     public function reset($part) 
     {
@@ -44,7 +44,7 @@ class CreateTable extends BaseCreateTable
     }
     
     /**
-     * @see BaseCreateTable::get()
+     * {@inheritdoc}
      */
     public function get($part) 
     {
@@ -58,7 +58,7 @@ class CreateTable extends BaseCreateTable
     }
     
     /**
-     * @see BaseCreateTable::merge()
+     * {@inheritdoc}
      */
     public function merge($data, $part) 
     {
@@ -75,7 +75,7 @@ class CreateTable extends BaseCreateTable
     }
 
     /**
-     * @see BaseCreateTable::render()
+     * {@inheritdoc}
      */
     public function render() 
     {
@@ -106,7 +106,7 @@ class CreateTable extends BaseCreateTable
     }
 
     /**
-     * @see BaseCreateTable::renderColumns()
+     * {@inheritdoc}
      */
     protected function renderColumns() 
     {

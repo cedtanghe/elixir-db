@@ -77,7 +77,7 @@ class Select extends SQLAbstract
     }
     
     /**
-     * @see Select::combine()
+     * {@inheritdoc}
      */
     public function combineUnion(array $SQL)
     {
@@ -85,7 +85,7 @@ class Select extends SQLAbstract
     }
     
     /**
-     * @see Select::combine()
+     * {@inheritdoc}
      */
     public function combineUnionAll(array $SQL)
     {
@@ -93,7 +93,7 @@ class Select extends SQLAbstract
     }
     
     /**
-     * @see Select::combine()
+     * {@inheritdoc}
      */
     public function combineExpect(array $SQL)
     {
@@ -101,7 +101,7 @@ class Select extends SQLAbstract
     }
     
     /**
-     * @see Select::combine()
+     * {@inheritdoc}
      */
     public function combineIntersect(array $SQL)
     {
@@ -258,7 +258,7 @@ class Select extends SQLAbstract
     }
 
     /**
-     * @see SQLInterface::render()
+     * {@inheritdoc}
      */
     public function render() 
     {

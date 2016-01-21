@@ -77,7 +77,7 @@ class Delete extends SQLAbstract
     }
 
     /**
-     * @see SQLInterface::render()
+     * {@inheritdoc}
      */
     public function render()
     {

@@ -26,7 +26,7 @@ class AlterTable extends BaseAlterTable
     const FIRST = 'first';
 
     /**
-     * @see BaseAlterTable::renameColumn()
+     * {@inheritdoc}
      * @throws \InvalidArgumentException
      */
     public function renameColumn($oldColumn, $newColumn) 
@@ -46,7 +46,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see AlterTable::addColumn()
+     * {@inheritdoc}
      * @param Column|string $previous
      */
     public function addColumnAfter(Column $column, $previous) 
@@ -62,7 +62,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see AlterTable::addColumn()
+     * {@inheritdoc}
      */
     public function addColumnFirst(Column $column) 
     {
@@ -118,7 +118,7 @@ class AlterTable extends BaseAlterTable
     }
     
     /**
-     * @see BaseAlterTable::get()
+     * {@inheritdoc}
      */
     public function get($part) 
     {
@@ -142,7 +142,7 @@ class AlterTable extends BaseAlterTable
     }
     
     /**
-     * @see BaseAlterTable::merge()
+     * {@inheritdoc}
      */
     public function merge($data, $part) 
     {
@@ -159,7 +159,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::render()
+     * {@inheritdoc}
      */
     public function render() 
     {
@@ -202,7 +202,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::renderAddColumn()
+     * {@inheritdoc}
      */
     protected function renderAddColumn($data) 
     {
@@ -310,7 +310,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::renderModifyColumn()
+     * {@inheritdoc}
      */
     protected function renderModifyColumn($data) 
     {
@@ -405,7 +405,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::renderRenameColumn()
+     * {@inheritdoc}
      */
     protected function renderRenameColumn($data)
     {

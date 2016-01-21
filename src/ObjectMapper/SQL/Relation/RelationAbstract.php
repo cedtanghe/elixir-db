@@ -60,7 +60,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     protected $filled = false;
 
     /**
-     * @see RelationInterface::getType()
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -68,7 +68,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterfaceMetas::getType()
+     * {@inheritdoc}
      */
     public function getRepository()
     {
@@ -76,7 +76,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterfaceMetas::getTarget()
+     * {@inheritdoc}
      */
     public function getTarget() 
     {
@@ -101,7 +101,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterfaceMetas::getForeignKey()
+     * {@inheritdoc}
      */
     public function getForeignKey()
     {
@@ -141,7 +141,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterfaceMetas::getLocalKey()
+     * {@inheritdoc}
      */
     public function getLocalKey() 
     {
@@ -178,7 +178,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterfaceMetas::getPivot()
+     * {@inheritdoc}
      */
     public function getPivot() 
     {
@@ -247,7 +247,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterfaceMetas::getCriterias()
+     * {@inheritdoc}
      */
     public function getCriterias()
     {
@@ -255,7 +255,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterface::setRelated()
+     * {@inheritdoc}
      */
     public function setRelated($value, array $options = [])
     {
@@ -269,7 +269,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterface::getRelated()
+     * {@inheritdoc}
      */
     public function getRelated()
     {
@@ -277,7 +277,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterface::isFilled()
+     * {@inheritdoc}
      */
     public function isFilled()
     {
@@ -285,7 +285,7 @@ abstract class RelationAbstract implements RelationInterfaceMetas
     }
 
     /**
-     * @see RelationInterface::load()
+     * {@inheritdoc}
      */
     public function load()
     {

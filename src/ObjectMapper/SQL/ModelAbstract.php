@@ -65,7 +65,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     protected $related = [];
     
     /**
-     * @see EntityAbstract::__construct()
+     * {@inheritdoc}
      */
     public function __construct(array $config = null) 
     {
@@ -124,7 +124,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::setConnectionManager()
+     * {@inheritdoc}
      */
     public function setConnectionManager(ConnectionManager $value) 
     {
@@ -137,7 +137,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::getConnectionManager()
+     * {@inheritdoc}
      */
     public function getConnectionManager() 
     {
@@ -145,8 +145,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see RepositoryInterface::getConnection()
-     * @return DBInterface
+     * {@inheritdoc}
      */
     public function getConnection($key = null) 
     {
@@ -159,7 +158,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::getStockageName()
+     * {@inheritdoc}
      */
     public function getStockageName()
     {
@@ -175,7 +174,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see RepositoryInterface::getPrimaryKey()
+     * {@inheritdoc}
      */
     public function getPrimaryKey() 
     {
@@ -215,7 +214,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see RepositoryInterface::find()
+     * {@inheritdoc}
      */
     public function find($options = null)
     {
@@ -244,7 +243,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::save()
+     * {@inheritdoc}
      */
     public function save() 
     {
@@ -252,8 +251,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::insert()
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function insert() 
     {
@@ -344,7 +342,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::update()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function update(array $members = [], array $omitMembers = []) 
@@ -468,7 +466,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::delete()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function delete() 
@@ -544,7 +542,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see EntityAbstract::set()
+     * {@inheritdoc}
      */
     public function set($key, $value) 
     {
@@ -564,7 +562,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see EntityAbstract::createInstance()
+     * {@inheritdoc}
      */
     protected function createInstance($class, array $config = null)
     {
@@ -575,7 +573,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see EntityAbstract::export()
+     * {@inheritdoc}
      */
     public function export(array $members = [], array $omitMembers = [], array $options = [])
     {

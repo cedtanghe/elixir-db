@@ -10,7 +10,7 @@ use Elixir\DB\Query\SQL\Select as BaseSelect;
 class Select extends BaseSelect
 {
     /**
-     * @see OrderTrait::renderOrder()
+     * {@inheritdoc}
      */
     protected function renderOrder()
     {

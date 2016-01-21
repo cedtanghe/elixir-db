@@ -15,7 +15,7 @@ class Delete extends BaseDelete
     use LimitTrait;
     
     /**
-     * @see BaseDelete::reset()
+     * {@inheritdoc}
      */
     public function reset($part) 
     {
@@ -38,7 +38,7 @@ class Delete extends BaseDelete
     }
     
     /**
-     * @see BaseDelete::get()
+     * {@inheritdoc}
      */
     public function get($part) 
     {
@@ -56,7 +56,7 @@ class Delete extends BaseDelete
     }
     
     /**
-     * @see BaseDelete::merge()
+     * {@inheritdoc}
      */
     public function merge($data, $part) 
     {
@@ -79,7 +79,7 @@ class Delete extends BaseDelete
     }
    
     /**
-     * @see BaseDelete::render()
+     * {@inheritdoc}
      */
     public function render()
     {
@@ -94,7 +94,7 @@ class Delete extends BaseDelete
     }
     
     /**
-     * @see OrderTrait::renderOrder()
+     * {@inheritdoc}
      */
     protected function renderOrder()
     {

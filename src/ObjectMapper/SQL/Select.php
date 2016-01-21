@@ -81,7 +81,7 @@ class Select implements FindableInterface
     }
     
     /**
-     * @see FindableInterface::extend()
+     * {@inheritdoc}
      */
     public function extend(FindableExtensionInterface $extension)
     {
@@ -167,7 +167,7 @@ class Select implements FindableInterface
     }
 
     /**
-     * @see FindableInterface::has()
+     * {@inheritdoc}
      */
     public function has() 
     {
@@ -193,7 +193,7 @@ class Select implements FindableInterface
     }
 
     /**
-     * @see FindableInterface::count()
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -335,7 +335,7 @@ class Select implements FindableInterface
     }
 
     /**
-     * @see FindableInterface::raw()
+     * {@inheritdoc}
      */
     public function raw() 
     {
@@ -398,7 +398,7 @@ class Select implements FindableInterface
     }
 
     /**
-     * @see FindableInterface::first()
+     * {@inheritdoc}
      */
     public function first() 
     {
@@ -409,7 +409,7 @@ class Select implements FindableInterface
     }
     
     /**
-     * @see FindableInterface::all()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function all()
