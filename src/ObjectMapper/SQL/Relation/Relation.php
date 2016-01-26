@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\RelationInterface;
 
 /**
@@ -34,7 +33,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::getType()
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -42,23 +41,18 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::setRelated()
+     * {@inheritdoc}
      */
     public function setRelated($value, array $options = []) 
     {
         $options += ['filled' => true];
-        
-        if (is_array($value))
-        {
-            $value = new Collection($value);
-        }
         
         $this->related = $value;
         $this->filled = $options['filled'];
     }
 
     /**
-     * @see RelationInterface::getRelated()
+     * {@inheritdoc}
      */
     public function getRelated()
     {
@@ -66,7 +60,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::isFilled()
+     * {@inheritdoc}
      */
     public function isFilled()
     {
@@ -74,7 +68,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @see RelationInterface::isFilled()
+     * {@inheritdoc}
      */
     public function load()
     {

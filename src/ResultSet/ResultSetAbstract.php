@@ -37,4 +37,10 @@ abstract class ResultSetAbstract implements \Iterator, \Countable
      * @return array
      */
     abstract public function all();
+    
+    /**
+     * @param interger $column
+     * @return mixed
+     */
+    abstract public function column($column = 0);
 }

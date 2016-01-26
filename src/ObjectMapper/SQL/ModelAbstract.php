@@ -2,8 +2,8 @@
 
 namespace Elixir\DB\ObjectMapper\SQL;
 
+use Elixir\DB\ConnectionManager;
 use Elixir\DB\DBInterface;
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\EntityAbstract;
 use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
@@ -12,7 +12,6 @@ use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\Select;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
-use Elixir\DI\ContainerInterface;
 use Elixir\STDLib\StringUtils;
 
 /**
@@ -26,7 +25,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     const DEFAULT_CONNECTION_KEY = 'db.default';
     
     /**
-     * @var ContainerInterface
+     * @var ConnectionManager
      */
     public static $defaultConnectionManager;
     
@@ -41,7 +40,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     protected $enableInitTraits = true;
 
     /**
-     * @var ContainerInterface
+     * @var ConnectionManager
      */
     protected $connectionManager;
 
@@ -66,7 +65,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     protected $related = [];
     
     /**
-     * @see EntityAbstract::__construct()
+     * {@inheritdoc}
      */
     public function __construct(array $config = null) 
     {
@@ -125,9 +124,9 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::setConnectionManager()
+     * {@inheritdoc}
      */
-    public function setConnectionManager(ContainerInterface $value) 
+    public function setConnectionManager(ConnectionManager $value) 
     {
         $this->connectionManager = $value;
         
@@ -138,7 +137,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::getConnectionManager()
+     * {@inheritdoc}
      */
     public function getConnectionManager() 
     {
@@ -146,8 +145,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see RepositoryInterface::getConnection()
-     * @return DBInterface
+     * {@inheritdoc}
      */
     public function getConnection($key = null) 
     {
@@ -160,7 +158,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::getStockageName()
+     * {@inheritdoc}
      */
     public function getStockageName()
     {
@@ -176,7 +174,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see RepositoryInterface::getPrimaryKey()
+     * {@inheritdoc}
      */
     public function getPrimaryKey() 
     {
@@ -216,7 +214,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see RepositoryInterface::find()
+     * {@inheritdoc}
      */
     public function find($options = null)
     {
@@ -245,7 +243,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::save()
+     * {@inheritdoc}
      */
     public function save() 
     {
@@ -253,8 +251,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::insert()
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function insert() 
     {
@@ -345,7 +342,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::update()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function update(array $members = [], array $omitMembers = []) 
@@ -469,7 +466,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
 
     /**
-     * @see RepositoryInterface::delete()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function delete() 
@@ -545,7 +542,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see EntityAbstract::set()
+     * {@inheritdoc}
      */
     public function set($key, $value) 
     {
@@ -565,7 +562,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see EntityAbstract::createInstance()
+     * {@inheritdoc}
      */
     protected function createInstance($class, array $config = null)
     {
@@ -576,7 +573,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     }
     
     /**
-     * @see EntityAbstract::export()
+     * {@inheritdoc}
      */
     public function export(array $members = [], array $omitMembers = [], array $options = [])
     {
@@ -611,7 +608,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
                 {
                     $v = $v->export([], [], $options);
                 } 
-                else if ($v instanceof Collection)
+                else if (is_array($v))
                 {
                     $v = $this->exportCollection($v, $options);
                 }

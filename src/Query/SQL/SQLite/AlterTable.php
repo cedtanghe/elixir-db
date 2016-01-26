@@ -12,7 +12,7 @@ use Elixir\DB\Query\SQL\Constraint;
 class AlterTable extends BaseAlterTable 
 {
     /**
-     * @see BaseAlterTable::modifyColumn()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function modifyColumn(Column $column) 
@@ -21,7 +21,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::renameColumn()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function renameColumn($oldColumn, $newColumn) 
@@ -30,7 +30,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::dropColumn()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function dropColumn($column)
@@ -39,7 +39,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::addConstraint()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function addConstraint(Constraint $constraint)
@@ -48,7 +48,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::dropConstraint()
+     * {@inheritdoc}
      * @throws \LogicException
      */
     public function dropConstraint($constraint = null, $type = null) 
@@ -57,7 +57,7 @@ class AlterTable extends BaseAlterTable
     }
 
     /**
-     * @see BaseAlterTable::renderAddColumn()
+     * {@inheritdoc}
      */
     protected function renderAddColumn($data) 
     {

@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper;
 
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\EntityEvent;
 use Elixir\Dispatcher\DispatcherTrait;
 use Elixir\STDLib\StringUtils;
@@ -15,7 +14,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     use DispatcherTrait;
     
     /**
-     * @see EntityInterface::factory()
+     * {@inheritdoc}
      */
     public static function factory(array $config = null)
     {
@@ -87,7 +86,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 isset($config['hydrate']) ? $config['hydrate'] : $config,
                 [
                     'raw' => true, 
-                    'sync' => true
+                    'sync' => false
                 ]
             );
         }
@@ -114,7 +113,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::setIgnoreValue()
+     * {@inheritdoc}
      */
     public function setIgnoreValue($value)
     {
@@ -122,7 +121,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::getIgnoreValue()
+     * {@inheritdoc}
      */
     public function getIgnoreValue()
     {
@@ -146,7 +145,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::getFillableKeys()
+     * {@inheritdoc}
      */
     public function getFillableKeys() 
     {
@@ -154,7 +153,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::getGuardedKeys()
+     * {@inheritdoc}
      */
     public function getGuardedKeys()
     {
@@ -186,7 +185,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::isModified()
+     * {@inheritdoc}
      */
     public function isModified($state = self::SYNC_ALL) 
     {
@@ -195,7 +194,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::getModified()
+     * {@inheritdoc}
      */
     public function getModified($state = self::SYNC_ALL) 
     {
@@ -232,7 +231,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::sync()
+     * {@inheritdoc}
      */
     public function sync($state = self::SYNC_ALL) 
     {
@@ -261,7 +260,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::has()
+     * {@inheritdoc}
      */
     public function has($key) 
     {
@@ -269,7 +268,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::set()
+     * {@inheritdoc}
      * @throws \InvalidArgumentException
      */
     public function set($key, $value) 
@@ -280,11 +279,6 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
             {
                 throw new \InvalidArgumentException(sprintf('Key "%s" is a not declared property.', $key));
             }
-        }
-
-        if (is_array($value)) 
-        {
-            $value = new Collection($value);
         }
         
         if ($this->isFillable()) 
@@ -306,7 +300,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::get()
+     * {@inheritdoc}
      */
     public function get($key, $default = null) 
     {
@@ -319,7 +313,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @see EntityInterface::hydrate()
+     * {@inheritdoc}
      */
     public function hydrate(array $data, array $options = [])
     {
@@ -373,7 +367,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 }
             }
 
-            if ($value instanceof Collection || is_array($value))
+            if (is_array($value))
             {
                 $value = $this->hydrateCollection($value, $options);
             }
@@ -420,7 +414,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
     
     /**
-     * @param array|Collection $data
+     * @param array $data
      * @param array $options
      * @return mixed
      */
@@ -444,7 +438,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
         {
             foreach ($data as $key => &$value)
             {
-                if ($value instanceof Collection || is_array($value))
+                if (is_array($value))
                 {
                     $value = $this->hydrateCollection($value, $options);
                 }
@@ -455,7 +449,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @see EntityInterface::export()
+     * {@inheritdoc}
      */
     public function export(array $members = [], array $omitMembers = [], array $options = [])
     {
@@ -480,11 +474,11 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 {
                     $value = $value->export([], [], $options);
                 } 
-                else if ($v instanceof Collection)
+                else if (is_array($value))
                 {
                     $value = $this->exportCollection($value, $options);
                 }
-
+                
                 $data[$key] = $value;
                 $data['_class'] = $this->className;
             }
@@ -517,15 +511,15 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     }
 
     /**
-     * @param Collection $data
+     * @param array $data
      * @param array $options
      * @return array
      */
-    protected function exportCollection(Collection $data, $options) 
+    protected function exportCollection(array $data, $options) 
     {
         foreach ($data as $key => &$value) 
         {
-            if ($value instanceof Collection) 
+            if (is_array($value)) 
             {
                 $value = $this->exportCollection($value, $options);
             } 

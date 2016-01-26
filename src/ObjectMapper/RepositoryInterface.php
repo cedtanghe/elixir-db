@@ -2,10 +2,10 @@
 
 namespace Elixir\DB\ObjectMapper;
 
+use Elixir\DB\ConnectionManager;
 use Elixir\DB\DBInterface;
 use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
-use Elixir\DI\ContainerInterface;
 use Elixir\Dispatcher\DispatcherInterface;
 
 /**
@@ -19,12 +19,12 @@ interface RepositoryInterface extends EntityInterface, DispatcherInterface
     public static function factory(array $config = null);
     
     /**
-     * @param ContainerInterface $value
+     * @param ConnectionManager $value
      */
-    public function setConnectionManager(ContainerInterface $value);
+    public function setConnectionManager(ConnectionManager $value);
 
     /**
-     * @return ContainerInterface
+     * @return ConnectionManager
      */
     public function getConnectionManager();
 

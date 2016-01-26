@@ -36,7 +36,7 @@ class DBEvent extends Event
     protected $elapsedTime;
 
     /**
-     * @see Event::__contruct()
+     * {@inheritdoc}
      * @param array $params
      */
     public function __construct($type, array $params = []) 

@@ -10,7 +10,7 @@ use Elixir\DB\Query\SQL\SQLAbstract;
 class TruncateTable extends SQLAbstract 
 {
     /**
-     * @see SQLInterface::render()
+     * {@inheritdoc}
      */
     public function render() 
     {

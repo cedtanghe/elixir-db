@@ -3,12 +3,12 @@
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
 use Elixir\DB\ObjectMapper\RepositoryInterface;
-use Elixir\DB\ObjectMapper\SQL\Relation\BaseAbstract;
+use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class BelongsToMany extends BaseAbstract 
+class BelongsToMany extends RelationAbstract 
 {
     /**
      * @param RepositoryInterface $repository
@@ -52,14 +52,14 @@ class BelongsToMany extends BaseAbstract
         
         if (null !== $this->related)
         {
-            if (!$this->related->in($target))
+            if (!in_array($target, $this->related, true))
             {
-                $this->related->append($target);
+                $this->related[] = $target;
             }
         }
         else
         {
-            $this->setRelated(new Collection([$target]), ['filled' => true]);
+            $this->setRelated([$target], ['filled' => true]);
         }
         
         return $result;
@@ -79,7 +79,12 @@ class BelongsToMany extends BaseAbstract
         
         if (null !== $this->related)
         {
-            $this->related->remove($target);
+            $pos = array_search($target, $this->related);
+            
+            if (false !== $pos) 
+            {
+                array_splice($this->related, $pos, 1);
+            }
         }
         
         return $result;

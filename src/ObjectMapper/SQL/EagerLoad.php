@@ -5,8 +5,8 @@ namespace Elixir\DB\ObjectMapper\SQL;
 use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
 use Elixir\DB\ObjectMapper\RepositoryInterface;
-use Elixir\DB\ObjectMapper\SQL\Relation\BaseAbstract;
 use Elixir\DB\ObjectMapper\SQL\Relation\Pivot;
+use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 use Elixir\DB\Query\SQL\JoinClause;
 
 /**
@@ -111,7 +111,7 @@ class EagerLoad
 
     /**
      * @param string $value
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function setForeignKey($value) 
     {
@@ -151,7 +151,7 @@ class EagerLoad
 
     /**
      * @param string $value
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function setLocalKey($value) 
     {
@@ -188,7 +188,7 @@ class EagerLoad
 
     /**
      * @param Pivot $pivot
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function withPivot(Pivot $pivot)
     {
@@ -257,7 +257,7 @@ class EagerLoad
 
     /**
      * @param callable $criteria
-     * @return BaseAbstract
+     * @return RelationAbstract
      */
     public function addCriteria(callable $criteria) 
     {

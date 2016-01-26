@@ -92,7 +92,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see QueryBuilderInterface::getDriver()
+     * {@inheritdoc}
      */
     public function getDriver()
     {
@@ -100,7 +100,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see DBInterface::begin()
+     * {@inheritdoc}
      */
     public function begin() 
     {
@@ -116,7 +116,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see DBInterface::rollBack()
+     * {@inheritdoc}
      */
     public function rollBack() 
     {
@@ -132,7 +132,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see DBInterface::commit()
+     * {@inheritdoc}
      */
     public function commit() 
     {
@@ -148,7 +148,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see DBInterface::inTransaction()
+     * {@inheritdoc}
      */
     public function inTransaction() 
     {
@@ -156,7 +156,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
     
     /**
-     * @see DBInterface::quote()
+     * {@inheritdoc}
      */
     public function quote($value, $type = null) 
     {
@@ -191,7 +191,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
     
     /**
-     * @see DBInterface::exec()
+     * {@inheritdoc}
      */
     public function exec($query) 
     {
@@ -225,7 +225,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see DBInterface::query()
+     * {@inheritdoc}
      */
     public function query($query, array $bindings = []) 
     {
@@ -364,7 +364,7 @@ class PDO implements DBInterface, DispatcherInterface, QueryBuilderInterface
     }
 
     /**
-     * @see DBInterface::lastInsertId()
+     * {@inheritdoc}
      */
     public function lastInsertId() 
     {

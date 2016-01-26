@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper;
 
-use Elixir\DB\ObjectMapper\Collection;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
 use Elixir\DB\ObjectMapper\RepositoryInterface;
 
@@ -38,7 +37,7 @@ interface FindableInterface
     public function first();
     
     /**
-     * @return Collection
+     * @return array
      */
     public function all();
 }

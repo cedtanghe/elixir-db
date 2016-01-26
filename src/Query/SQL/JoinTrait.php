@@ -16,7 +16,7 @@ trait JoinTrait
     protected $join = [];
     
     /**
-     * @see JoinTrait::join()
+     * {@inheritdoc}
      */
     public function innerJoin($table, $condition, $value = null, $column = null)
     {
@@ -24,7 +24,7 @@ trait JoinTrait
     }
     
     /**
-     * @see JoinTrait::join()
+     * {@inheritdoc}
      */
     public function leftJoin($table, $condition, $value = null, $column = null)
     {
@@ -32,7 +32,7 @@ trait JoinTrait
     }
     
     /**
-     * @see JoinTrait::join()
+     * {@inheritdoc}
      */
     public function rightJoin($table, $condition, $value = null, $column = null)
     {
@@ -40,7 +40,7 @@ trait JoinTrait
     }
     
     /**
-     * @see JoinTrait::join()
+     * {@inheritdoc}
      */
     public function fullJoin($table, $condition, $value = null, $column = null)
     {
