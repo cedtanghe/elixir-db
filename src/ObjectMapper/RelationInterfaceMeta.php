@@ -8,7 +8,7 @@ use Elixir\DB\ObjectMapper\SQL\Relation\Pivot;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-interface RelationInterfaceMetas extends RelationInterface 
+interface RelationInterfaceMeta extends RelationInterface 
 {
     /**
      * @return RepositoryInterface

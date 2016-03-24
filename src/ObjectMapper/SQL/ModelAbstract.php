@@ -3,7 +3,6 @@
 namespace Elixir\DB\ObjectMapper\SQL;
 
 use Elixir\DB\ConnectionManager;
-use Elixir\DB\DBInterface;
 use Elixir\DB\ObjectMapper\EntityAbstract;
 use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;

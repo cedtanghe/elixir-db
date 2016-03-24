@@ -3,8 +3,7 @@
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
 use Elixir\DB\ObjectMapper\FindableInterface;
-use Elixir\DB\ObjectMapper\RelationInterface;
-use Elixir\DB\ObjectMapper\RelationInterfaceMetas;
+use Elixir\DB\ObjectMapper\RelationInterfaceMeta;
 use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\Relation\Pivot;
 use Elixir\DB\Query\SQL\JoinClause;
@@ -12,7 +11,7 @@ use Elixir\DB\Query\SQL\JoinClause;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-abstract class RelationAbstract implements RelationInterfaceMetas
+abstract class RelationAbstract implements RelationInterfaceMeta
 {
     /**
      * @var string

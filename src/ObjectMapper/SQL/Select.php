@@ -5,7 +5,7 @@ namespace Elixir\DB\ObjectMapper\SQL;
 use Elixir\DB\DBInterface;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
-use Elixir\DB\ObjectMapper\RelationInterfaceMetas;
+use Elixir\DB\ObjectMapper\RelationInterfaceMeta;
 use Elixir\DB\ObjectMapper\RepositoryEvent;
 use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\EagerLoad;
@@ -273,7 +273,7 @@ class Select implements FindableInterface
             $m = explode('.', $member);
             $m = $this->repository->get(array_pop($m));
             
-            if ($m instanceof RelationInterfaceMetas)
+            if ($m instanceof RelationInterfaceMeta)
             {
                 $eagerLoad = new EagerLoad(
                     $this->repository,
