@@ -2,7 +2,7 @@
 
 namespace Elixir\DB\ObjectMapper\Model\Behavior;
 
-use Elixir\DB\ObjectMapper\RepositoryEvent;
+use Elixir\DB\ObjectMapper\FindEvent;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -19,7 +19,7 @@ trait GlobalScopeTrait
      */
     public function bootGlobalScopeTrait()
     {
-        $this->addListener(RepositoryEvent::PRE_FIND, function(RepositoryEvent $e)
+        $this->addListener(FindEvent::PRE_FIND, function(FindEvent $e)
         {
             $findable = $e->getQuery();
             

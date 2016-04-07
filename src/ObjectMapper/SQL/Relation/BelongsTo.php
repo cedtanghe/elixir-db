@@ -2,7 +2,7 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
-use Elixir\DB\ObjectMapper\RepositoryInterface;
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 
 /**
@@ -11,14 +11,14 @@ use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 class BelongsTo extends RelationAbstract 
 {
     /**
-     * @param RepositoryInterface $repository
-     * @param string|RepositoryInterface $target
+     * @param ActiveRecordInterface $model
+     * @param string|ActiveRecordInterface $target
      * @param array $config
      */
-    public function __construct(RepositoryInterface $repository, $target, array $config = []) 
+    public function __construct(ActiveRecordInterface $model, $target, array $config = []) 
     {
         $this->type = self::BELONGS_TO;
-        $this->repository = $repository;
+        $this->model = $model;
         $this->target = $target;
 
         $config += [
@@ -43,23 +43,23 @@ class BelongsTo extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function associate(RepositoryInterface $target)
+    public function associate(ActiveRecordInterface $target)
     {
         if (null !== $this->pivot)
         {
             $result = $this->pivot->attach(
                 $target->getConnectionManager(), 
                 $target->get($this->foreignKey), 
-                $this->repository->get($this->localKey)
+                $this->model->get($this->localKey)
             );
         }
         else
         {
-            $this->repository->set($this->localKey, $target->get($this->foreignKey));
-            $result = $this->repository->save();
+            $this->model->set($this->localKey, $target->get($this->foreignKey));
+            $result = $this->model->save();
         }
         
         $this->setRelated($target, ['filled' => true]);
@@ -67,23 +67,23 @@ class BelongsTo extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function dissociate(RepositoryInterface $target)
+    public function dissociate(ActiveRecordInterface $target)
     {
         if (null !== $this->pivot)
         {
             $result = $this->pivot->detach(
                 $target->getConnectionManager(), 
                 $target->get($this->foreignKey), 
-                $this->repository->get($this->localKey)
+                $this->model->get($this->localKey)
             );
         }
         else
         {
-            $this->repository->set($this->localKey, $this->repository->getIgnoreValue());
-            $result = $this->repository->save();
+            $this->model->set($this->localKey, $this->model->getIgnoreValue());
+            $result = $this->model->save();
         }
         
         $this->related = null;

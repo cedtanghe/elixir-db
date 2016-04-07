@@ -2,8 +2,8 @@
 
 namespace Elixir\DB\ObjectMapper;
 
+use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -32,7 +32,7 @@ interface FindableInterface
     public function raw();
     
     /**
-     * @return RepositoryInterface|null
+     * @return EntityInterface|null
      */
     public function first();
     

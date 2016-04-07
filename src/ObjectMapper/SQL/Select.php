@@ -3,11 +3,11 @@
 namespace Elixir\DB\ObjectMapper\SQL;
 
 use Elixir\DB\DBInterface;
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
+use Elixir\DB\ObjectMapper\FindEvent;
 use Elixir\DB\ObjectMapper\RelationInterfaceMeta;
-use Elixir\DB\ObjectMapper\RepositoryEvent;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\EagerLoad;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
@@ -19,9 +19,9 @@ use Elixir\STDLib\StringUtils;
 class Select implements FindableInterface 
 {
     /**
-     * @var RepositoryInterface 
+     * @var ActiveRecordInterface 
      */
-    protected $repository;
+    protected $model;
     
     /**
      * @var array 
@@ -54,21 +54,21 @@ class Select implements FindableInterface
     protected $SQL;
     
     /**
-     * @param RepositoryInterface $repository
+     * @param ActiveRecordInterface $model
      * @param mixed $options
      * @throws \LogicException
      */
-    public function __construct(RepositoryInterface $repository, $options = null)
+    public function __construct(ActiveRecordInterface $model, $options = null)
     {
-        $this->repository = $repository;
-        $this->repository->dispatch(
-            new RepositoryEvent(
-                RepositoryEvent::PRE_FIND, 
+        $this->model = $model;
+        $this->model->dispatch(
+            new FindEvent(
+                FindEvent::PRE_FIND, 
                 ['query' => $this]
             )
         );
         
-        $this->DB = $this->repository->getConnection('db.read');
+        $this->DB = $this->model->getConnection('db.read');
         
         if (!$this->DB instanceof QueryBuilderInterface)
         {
@@ -77,7 +77,7 @@ class Select implements FindableInterface
             );
         }
         
-        $this->SQL = $this->DB->createSelect('`' . $this->repository->getStockageName() . '`');
+        $this->SQL = $this->DB->createSelect('`' . $this->model->getStockageName() . '`');
     }
     
     /**
@@ -97,7 +97,7 @@ class Select implements FindableInterface
     
     /**
      * @param string $part
-     * @return Select
+     * @return self
      */
     public function reset($part)
     {
@@ -137,7 +137,7 @@ class Select implements FindableInterface
     /**
      * @param mixed $data
      * @param string $part
-     * @return Select
+     * @return self
      */
     public function merge($data, $part) 
     {
@@ -177,7 +177,7 @@ class Select implements FindableInterface
     /**
      * @param integer $page
      * @param integer $numberPerPage
-     * @return Select
+     * @return self
      */
     public function paginate($page, $numberPerPage = 25)
     {
@@ -216,7 +216,7 @@ class Select implements FindableInterface
     
     /**
      * @param string $method
-     * @return Select
+     * @return self
      */
     public function scope($method)
     {
@@ -233,7 +233,7 @@ class Select implements FindableInterface
             }
 
             array_unshift($options, $this);
-            call_user_func_array([$this->repository, 'scope' . StringUtils::camelize($method)], $options);
+            call_user_func_array([$this->model, 'scope' . StringUtils::camelize($method)], $options);
             
             $this->scopes[] = $method;
         }
@@ -243,7 +243,7 @@ class Select implements FindableInterface
     
     /**
      * @param string $method
-     * @return Select
+     * @return self
      */
     public function load($method)
     {
@@ -264,19 +264,19 @@ class Select implements FindableInterface
     /**
      * @param string $member
      * @param EagerLoad $eagerLoad
-     * @return Select
+     * @return self
      */
     public function with($member, EagerLoad $eagerLoad = null)
     {
         if (null === $eagerLoad)
         {
             $m = explode('.', $member);
-            $m = $this->repository->get(array_pop($m));
+            $m = $this->model->get(array_pop($m));
             
             if ($m instanceof RelationInterfaceMeta)
             {
                 $eagerLoad = new EagerLoad(
-                    $this->repository,
+                    $this->model,
                     $m->getTarget(),
                     [
                         'foreign_key' => $m->getForeignKey(),
@@ -289,14 +289,14 @@ class Select implements FindableInterface
             }
             else
             {
-                $parts = explode('\\', get_class($this->repository));
+                $parts = explode('\\', get_class($this->model));
                 array_pop($parts);
                 
                 $class = '\\' . ltrim(implode('\\', $parts) . '\\' . ucfirst($m), '\\');
                 $eagerLoad = new EagerLoad(
-                    $this->repository,
+                    $this->model,
                     $class, 
-                    ['local_key' => $this->repository->getPrimaryKey()]
+                    ['local_key' => $this->model->getIdentifier()]
                 );
             }
         }
@@ -339,12 +339,12 @@ class Select implements FindableInterface
      */
     public function raw() 
     {
-        $event = new RepositoryEvent(
-            RepositoryEvent::PARSE_QUERY_FIND, 
+        $event = new FindEvent(
+            FindEvent::PARSE_QUERY_FIND, 
             ['query' => $this]
         );
         
-        $this->repository->dispatch($event);
+        $this->model->dispatch($event);
         $SQL = (string)$event->getQuery();
         
         $result = $this->DB->query($SQL);
@@ -352,19 +352,19 @@ class Select implements FindableInterface
     }
     
     /**
-     * @return Select
+     * @return self
      */
     public function current()
     {
-        foreach ((array)$this->repository->getPrimaryKey() as $key)
+        foreach ((array)$this->model->getIdentifier() as $key)
         {
             $this->SQL->where(
                 sprintf(
                     '`%s`.`%s` = ?',
-                    $this->repository->getStockageName(), 
+                    $this->model->getStockageName(), 
                     $key
                 ), 
-                $this->repository->get($key)
+                $this->model->get($key)
             );
         }
         
@@ -373,12 +373,12 @@ class Select implements FindableInterface
     
     /**
      * @param integer|array $id
-     * @return Select
+     * @return self
      * @throws \LogicException
      */
     public function primary($id)
     {
-        $key = $this->repository->getPrimaryKey();
+        $key = $this->model->getIdentifier();
         
         if (is_array($key))
         {
@@ -388,7 +388,7 @@ class Select implements FindableInterface
         $this->SQL->where(
             sprintf(
                 '`%s`.`%s` IN(?)',
-                $this->repository->getStockageName(), 
+                $this->model->getStockageName(), 
                 $key
             ), 
             (array)$id
@@ -403,9 +403,9 @@ class Select implements FindableInterface
     public function first() 
     {
         $this->SQL->limit(1);
-        $repositories = $this->all();
+        $models = $this->all();
         
-        return count($repositories) > 0 ? $repositories[0] : null;
+        return count($models) > 0 ? $models[0] : null;
     }
     
     /**
@@ -415,33 +415,33 @@ class Select implements FindableInterface
     public function all()
     {
         $rows = $this->raw();
-        $repositories = [];
-        $class = get_class($this->repository);
+        $models = [];
+        $class = get_class($this->model);
         
         foreach ($rows as $row)
         {
-            $repository = $class::factory();
-            $repository->setConnectionManager($this->repository->getConnectionManager());
-            $repository->hydrate($row, ['raw' => true, 'sync' => true]);
+            $model = $class::factory();
+            $model->setConnectionManager($this->model->getConnectionManager());
+            $model->hydrate($row, ['raw' => true, 'sync' => true]);
             
             foreach ($this->load as $member => $arguments) 
             {
                 $method = 'load' . StringUtils::camelize($member);
 
-                if (method_exists($repository, $method))
+                if (method_exists($model, $method))
                 {
-                    call_user_func_array([$repository, $method], $arguments);
+                    call_user_func_array([$model, $method], $arguments);
                 } else 
                 {
                     // Use lazy loading
-                    $repository->$member;
+                    $model->$member;
                 }
             }
 
-            $repositories[] = $repository;
+            $models[] = $model;
         }
 
-        if (count($repositories) > 0)
+        if (count($models) > 0)
         {
             foreach ($this->with as $member => $data)
             {
@@ -455,12 +455,12 @@ class Select implements FindableInterface
                     );
                 }
 
-                $data['eager_load']->sync($member, $repositories, $data['with']);
+                $data['eager_load']->sync($member, $models, $data['with']);
             }
         }
 
-        $this->repository->dispatch(new RepositoryEvent(RepositoryEvent::FIND));
-        return $repositories;
+        $this->model->dispatch(new FindEvent(FindEvent::FIND));
+        return $models;
     }
     
     /**

@@ -2,10 +2,10 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Extension;
 
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
-use Elixir\DB\ObjectMapper\RepositoryEvent;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
+use Elixir\DB\ObjectMapper\FindEvent;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -18,9 +18,9 @@ class Versionable implements FindableExtensionInterface
     protected $findable;
     
     /**
-     * @var RepositoryInterface 
+     * @var ActiveRecordInterface 
      */
-    protected $repository;
+    protected $model;
     
     /**
      * @var boolean 
@@ -28,12 +28,12 @@ class Versionable implements FindableExtensionInterface
     protected $addConstraint = true;
     
     /**
-     * @param RepositoryInterface $repository
+     * @param ActiveRecordInterface $model
      */
-    public function __construct(RepositoryInterface $repository)
+    public function __construct(ActiveRecordInterface $model)
     {
-        $this->repository = $repository;
-        $this->repository->addListener(RepositoryEvent::PARSE_QUERY_FIND, function(RepositoryEvent $e)
+        $this->model = $model;
+        $this->model->addListener(FindEvent::PARSE_QUERY_FIND, function(FindEvent $e)
         {
             if($this->addConstraint)
             {
@@ -41,7 +41,7 @@ class Versionable implements FindableExtensionInterface
                 
                 foreach ($this->findable->get('where') as $where)
                 {
-                    if (false !== strpos($where, $this->repository->getVersionedColumn()))
+                    if (false !== strpos($where, $this->model->getVersionedColumn()))
                     {
                         $hasContraint = true;
                     }
@@ -52,10 +52,10 @@ class Versionable implements FindableExtensionInterface
                     $this->findable->where(
                         sprintf(
                             '`%s`.`%s` = ?',
-                            $this->repository->getStockageName(),
-                            $this->repository->getVersionedColumn() 
+                            $this->model->getStockageName(),
+                            $this->model->getVersionedColumn() 
                         ),
-                        $this->repository->getCurrentVersion()
+                        $this->model->getCurrentVersion()
                     );
                 }
             }
@@ -78,8 +78,8 @@ class Versionable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` = ?',
-                $this->repository->getStockageName(),
-                $this->repository->getVersionedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getVersionedColumn() 
             ),
             $value
         );

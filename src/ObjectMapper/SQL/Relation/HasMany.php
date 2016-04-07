@@ -2,7 +2,7 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
-use Elixir\DB\ObjectMapper\RepositoryInterface;
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 
 /**
@@ -11,14 +11,14 @@ use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 class HasMany extends RelationAbstract 
 {
     /**
-     * @param RepositoryInterface $repository
-     * @param string|RepositoryInterface $target
+     * @param ActiveRecordInterface $model
+     * @param string|ActiveRecordInterface $target
      * @param array $config
      */
-    public function __construct(RepositoryInterface $repository, $target, array $config = [])
+    public function __construct(ActiveRecordInterface $model, $target, array $config = [])
     {
         $this->type = self::HAS_MANY;
-        $this->repository = $repository;
+        $this->model = $model;
         $this->target = $target;
 
         $config += [
@@ -43,16 +43,16 @@ class HasMany extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function attach(RepositoryInterface $target)
+    public function attach(ActiveRecordInterface $target)
     {
         if (null !== $this->pivot)
         {
             $result = $this->pivot->attach(
-                $this->repository->getConnectionManager(), 
-                $this->repository->get($this->localKey), 
+                $this->model->getConnectionManager(), 
+                $this->model->get($this->localKey), 
                 $target->get($this->foreignKey)
             );
         }
@@ -78,16 +78,16 @@ class HasMany extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function detach(RepositoryInterface $target)
+    public function detach(ActiveRecordInterface $target)
     {
         if (null !== $this->pivot)
         {
             $result = $this->pivot->detach(
-                $this->repository->getConnectionManager(), 
-                $this->repository->get($this->localKey), 
+                $this->model->getConnectionManager(), 
+                $this->model->get($this->localKey), 
                 $target->get($this->foreignKey)
             );
         }
@@ -111,16 +111,16 @@ class HasMany extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function detachAndDelete(RepositoryInterface $target)
+    public function detachAndDelete(ActiveRecordInterface $target)
     {
         if (null !== $this->pivot)
         {
             $result = $this->pivot->detach(
-                $this->repository->getConnectionManager(), 
-                $this->repository->get($this->localKey), 
+                $this->model->getConnectionManager(), 
+                $this->model->get($this->localKey), 
                 $target->get($this->foreignKey)
             );
             

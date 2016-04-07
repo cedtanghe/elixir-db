@@ -5,16 +5,16 @@ namespace Elixir\DB\ObjectMapper;
 use Elixir\DB\ConnectionManager;
 use Elixir\DB\DBInterface;
 use Elixir\DB\ObjectMapper\EntityInterface;
-use Elixir\DB\ObjectMapper\FindableInterface;
+use Elixir\DB\ObjectMapper\FindInterface;
 use Elixir\Dispatcher\DispatcherInterface;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-interface RepositoryInterface extends EntityInterface, DispatcherInterface
+interface ActiveRecordInterface extends EntityInterface, FindInterface, DispatcherInterface
 {
     /**
-     * @return RepositoryInterface
+     * @return ActiveRecordInterface
      */
     public static function factory(array $config = null);
     
@@ -33,7 +33,7 @@ interface RepositoryInterface extends EntityInterface, DispatcherInterface
      * @return DBInterface
      */
     public function getConnection($key = null);
-
+    
     /**
      * @return string
      */
@@ -42,13 +42,7 @@ interface RepositoryInterface extends EntityInterface, DispatcherInterface
     /**
      * @return mixed
      */
-    public function getPrimaryKey();
-
-    /**
-     * @param mixed $options
-     * @return FindableInterface
-     */
-    public function find($options = null);
+    public function getIdentifier();
     
     /**
      * @return boolean

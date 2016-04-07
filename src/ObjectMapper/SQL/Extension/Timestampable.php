@@ -2,9 +2,9 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Extension;
 
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -17,16 +17,16 @@ class Timestampable implements FindableExtensionInterface
     protected $findable;
     
     /**
-     * @var RepositoryInterface 
+     * @var ActiveRecordInterface 
      */
-    protected $repository;
+    protected $model;
     
     /**
-     * @param RepositoryInterface $repository
+     * @param ActiveRecordInterface $model
      */
-    public function __construct(RepositoryInterface $repository)
+    public function __construct(ActiveRecordInterface $model)
     {
-        $this->repository = $repository;
+        $this->model = $model;
     }
 
     /**
@@ -46,8 +46,8 @@ class Timestampable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` < ?',
-                $this->repository->getStockageName(),
-                $this->repository->getCreatedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getCreatedColumn() 
             ),
             $this->convertDate($date)
         );
@@ -64,8 +64,8 @@ class Timestampable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` < ?',
-                $this->repository->getStockageName(),
-                $this->repository->getUpdatedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getUpdatedColumn() 
             ),
             $this->convertDate($date)
         );
@@ -82,8 +82,8 @@ class Timestampable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` > ?',
-                $this->repository->getStockageName(),
-                $this->repository->getCreatedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getCreatedColumn() 
             ),
             $this->convertDate($date)
         );
@@ -100,8 +100,8 @@ class Timestampable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` > ?',
-                $this->repository->getStockageName(),
-                $this->repository->getUpdatedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getUpdatedColumn() 
             ),
             $this->convertDate($date)
         );
@@ -119,8 +119,8 @@ class Timestampable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` BETWEEN ? AND ?',
-                $this->repository->getStockageName(),
-                $this->repository->getCreatedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getCreatedColumn() 
             ),
             $this->convertDate($start),
             $this->convertDate($end)
@@ -139,8 +139,8 @@ class Timestampable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` BETWEEN ? AND ?',
-                $this->repository->getStockageName(),
-                $this->repository->getUpdatedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getUpdatedColumn() 
             ),
             $this->convertDate($start),
             $this->convertDate($end)
@@ -158,12 +158,12 @@ class Timestampable implements FindableExtensionInterface
         if ($date instanceof \DateTime)
         {
             $timestamp = $date->getTimestamp();
-            return date($this->repository->getDeletedFormat(), $timestamp);
+            return date($this->model->getDeletedFormat(), $timestamp);
         }
         else if (is_numeric($date))
         {
             $timestamp = strtotime($date);
-            return date($this->repository->getDeletedFormat(), $timestamp);
+            return date($this->model->getDeletedFormat(), $timestamp);
         }
         
         return $date;

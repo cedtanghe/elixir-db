@@ -2,9 +2,9 @@
 
 namespace Elixir\DB\ObjectMapper\SQL;
 
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\Relation\Pivot;
 use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 use Elixir\DB\Query\SQL\JoinClause;
@@ -22,15 +22,15 @@ class EagerLoad
     /**
      * @var array
      */
-    protected $repositories;
+    protected $models;
 
     /**
-     * @var RepositoryInterface 
+     * @var ActiveRecordInterface 
      */
-    protected $repository;
+    protected $model;
 
     /**
-     * @var string|RepositoryInterface 
+     * @var string|ActiveRecordInterface 
      */
     protected $target;
 
@@ -55,13 +55,13 @@ class EagerLoad
     protected $criterias = [];
 
     /**
-     * @param RepositoryInterface $repository
-     * @param string|RepositoryInterface $target
+     * @param ActiveRecordInterface $model
+     * @param string|ActiveRecordInterface $target
      * @param array $config
      */
-    public function __construct(RepositoryInterface $repository, $target, array $config = [])
+    public function __construct(ActiveRecordInterface $model, $target, array $config = [])
     {
-        $this->repository = $repository;
+        $this->model = $model;
         $this->target = $target;
 
         $config += [
@@ -87,23 +87,23 @@ class EagerLoad
     }
 
     /**
-     * @return RepositoryInterface
+     * @return ActiveRecordInterface
      */
-    public function getRepository() 
+    public function getModel() 
     {
-        return $this->repository;
+        return $this->model;
     }
 
     /**
-     * @return RepositoryInterface
+     * @return ActiveRecordInterface
      */
     public function getTarget()
     {
-        if (!$this->target instanceof RepositoryInterface)
+        if (!$this->target instanceof ActiveRecordInterface)
         {
             $class = $this->target;
             $this->target = $class::factory();
-            $this->target->setConnectionManager($this->repository->getConnectionManager());
+            $this->target->setConnectionManager($this->model->getConnectionManager());
         }
 
         return $this->target;
@@ -131,13 +131,13 @@ class EagerLoad
             
             if (null !== $this->pivot) 
             {
-                $this->foreignKey = $this->target->getPrimaryKey();
+                $this->foreignKey = $this->target->getIdentifier();
             }
             else
             {
                 if ($this->type == self::BELONGS_TO)
                 {
-                    $this->foreignKey = $this->target->getPrimaryKey();
+                    $this->foreignKey = $this->target->getIdentifier();
                 }
                 else
                 {
@@ -168,17 +168,17 @@ class EagerLoad
         {
             if (null !== $this->pivot)
             {
-                $this->localKey = $this->repository->getPrimaryKey();
+                $this->localKey = $this->model->getIdentifier();
             }
             else
             {
                 if ($this->type == self::BELONGS_TO)
                 {
-                    $this->localKey = $this->repository->getStockageName() . '_id';
+                    $this->localKey = $this->model->getStockageName() . '_id';
                 }
                 else
                 {
-                    $this->localKey = $this->repository->getPrimaryKey();
+                    $this->localKey = $this->model->getIdentifier();
                 }
             }
         }
@@ -217,13 +217,13 @@ class EagerLoad
                 case self::HAS_MANY:
                     if (true === $this->pivot) 
                     {
-                        $table = $this->repository->getStockageName() . '_' . $this->target->getStockageName();
+                        $table = $this->model->getStockageName() . '_' . $this->target->getStockageName();
                         $this->withPivot(new Pivot($table));
                     }
                     
                     if (null === $this->pivot->getFirstKey()) 
                     {
-                        $this->pivot->setFirstKey($this->repository->getStockageName() . '_id');
+                        $this->pivot->setFirstKey($this->model->getStockageName() . '_id');
                     }
 
                     if (null === $this->pivot->getSecondKey())
@@ -235,7 +235,7 @@ class EagerLoad
                 case self::BELONGS_TO_MANY:
                     if (true === $this->pivot) 
                     {
-                        $table = $this->target->getStockageName() . '_' . $this->repository->getStockageName();
+                        $table = $this->target->getStockageName() . '_' . $this->model->getStockageName();
                         $this->withPivot(new Pivot($table));
                     }
             
@@ -246,7 +246,7 @@ class EagerLoad
 
                     if (null === $this->pivot->getSecondKey())
                     {
-                        $this->pivot->setSecondKey($this->repository->getStockageName() . '_id');
+                        $this->pivot->setSecondKey($this->model->getStockageName() . '_id');
                     }
                     break; 
             }
@@ -275,14 +275,14 @@ class EagerLoad
 
     /**
      * @param string $member
-     * @param array $repositories
+     * @param array $models
      * @param array $with
      */
-    public function sync($member, array $repositories, array $with = []) 
+    public function sync($member, array $models, array $with = []) 
     {
-        $this->repositories = $repositories;
+        $this->models = $models;
 
-        if (count($this->repositories) == 0) 
+        if (count($this->models) == 0)
         {
             return;
         }
@@ -309,9 +309,9 @@ class EagerLoad
 
                 foreach ($targets as $target)
                 {
-                    foreach ($this->repositories as $repository) 
+                    foreach ($this->models as $model) 
                     {
-                        $compare = $repository->get($this->localKey);
+                        $compare = $model->get($this->localKey);
 
                         if ($target->get($this->pivot ? self::REFERENCE_KEY : $this->foreignKey) == $compare)
                         {
@@ -330,18 +330,18 @@ class EagerLoad
 
                 foreach ($repartions as $compare => $value) 
                 {
-                    foreach ($this->repositories as $repository)
+                    foreach ($this->models as $model)
                     {
-                        if ($repository->get($this->localKey) == $compare) 
+                        if ($model->get($this->localKey) == $compare) 
                         {
-                            $repository->$member = $value;
+                            $model->$member = $value;
                         }
                     }
                 }
             }
         }
 
-        $this->repositories = null;
+        $this->models = null;
     }
 
     /**
@@ -361,9 +361,9 @@ class EagerLoad
     {
         $values = [];
 
-        foreach ($this->repositories as $repository)
+        foreach ($this->models as $model)
         {
-            $value = $repository->get($this->localKey);
+            $value = $model->get($this->localKey);
 
             if (null !== $value) 
             {
@@ -451,9 +451,9 @@ class EagerLoad
     {
         $values = [];
 
-        foreach ($this->repositories as $repository) 
+        foreach ($this->models as $model) 
         {
-            $value = $repository->get($this->localKey);
+            $value = $model->get($this->localKey);
 
             if (null !== $value) 
             {

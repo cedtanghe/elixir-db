@@ -61,7 +61,7 @@ interface EntityInterface
      * @return EntityInterface
      */
     public static function factory(array $config = null);
-
+    
     /**
      * @return mixed
      */

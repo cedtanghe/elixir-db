@@ -2,7 +2,7 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
-use Elixir\DB\ObjectMapper\RepositoryInterface;
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 
 /**
@@ -11,14 +11,14 @@ use Elixir\DB\ObjectMapper\SQL\Relation\RelationAbstract;
 class BelongsToMany extends RelationAbstract 
 {
     /**
-     * @param RepositoryInterface $repository
-     * @param string|RepositoryInterface $target
+     * @param ActiveRecordInterface $model
+     * @param string|ActiveRecordInterface $target
      * @param array $config
      */
-    public function __construct(RepositoryInterface $repository, $target, array $config = [])
+    public function __construct(ActiveRecordInterface $model, $target, array $config = [])
     {
         $this->type = self::BELONGS_TO_MANY;
-        $this->repository = $repository;
+        $this->model = $model;
         $this->target = $target;
         
         $config += [
@@ -39,15 +39,15 @@ class BelongsToMany extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function associate(RepositoryInterface $target)
+    public function associate(ActiveRecordInterface $target)
     {
         $result = $this->pivot->attach(
             $target->getConnectionManager(), 
             $target->get($this->foreignKey), 
-            $this->repository->get($this->localKey)
+            $this->model->get($this->localKey)
         );
         
         if (null !== $this->related)
@@ -66,15 +66,15 @@ class BelongsToMany extends RelationAbstract
     }
     
     /**
-     * @param RepositoryInterface $target
+     * @param ActiveRecordInterface $target
      * @return boolean
      */
-    public function dissociate(RepositoryInterface $target)
+    public function dissociate(ActiveRecordInterface $target)
     {
         $result = $this->pivot->detach(
             $target->getConnectionManager(), 
             $target->get($this->foreignKey), 
-            $this->repository->get($this->localKey)
+            $this->model->get($this->localKey)
         );
         
         if (null !== $this->related)

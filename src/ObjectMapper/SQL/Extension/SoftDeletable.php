@@ -2,10 +2,10 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Extension;
 
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableExtensionInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
-use Elixir\DB\ObjectMapper\RepositoryEvent;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
+use Elixir\DB\ObjectMapper\FindEvent;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -18,9 +18,9 @@ class SoftDeletable implements FindableExtensionInterface
     protected $findable;
     
     /**
-     * @var RepositoryInterface 
+     * @var ActiveRecordInterface 
      */
-    protected $repository;
+    protected $model;
     
     /**
      * @var boolean 
@@ -28,12 +28,12 @@ class SoftDeletable implements FindableExtensionInterface
     protected $addConstraint = true;
     
     /**
-     * @param RepositoryInterface $repository
+     * @param ActiveRecordInterface $model
      */
-    public function __construct(RepositoryInterface $repository)
+    public function __construct(ActiveRecordInterface $model)
     {
-        $this->repository = $repository;
-        $this->repository->addListener(RepositoryEvent::PARSE_QUERY_FIND, function(RepositoryEvent $e)
+        $this->model = $model;
+        $this->model->addListener(FindEvent::PARSE_QUERY_FIND, function(FindEvent $e)
         {
             if($this->addConstraint)
             {
@@ -41,7 +41,7 @@ class SoftDeletable implements FindableExtensionInterface
                 
                 foreach ($this->findable->get('where') as $where)
                 {
-                    if (false !== strpos($where, $this->repository->getDeletedColumn()))
+                    if (false !== strpos($where, $this->model->getDeletedColumn()))
                     {
                         $hasContraint = true;
                     }
@@ -52,8 +52,8 @@ class SoftDeletable implements FindableExtensionInterface
                     $this->findable->where(
                         sprintf(
                             '`%s`.`%s` IS NULL',
-                            $this->repository->getStockageName(),
-                            $this->repository->getDeletedColumn() 
+                            $this->model->getStockageName(),
+                            $this->model->getDeletedColumn() 
                         )
                     );
                 }
@@ -86,8 +86,8 @@ class SoftDeletable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` IS NOT NULL',
-                $this->repository->getStockageName(),
-                $this->repository->getDeletedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getDeletedColumn() 
             )
         );
         
@@ -104,8 +104,8 @@ class SoftDeletable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` < ?',
-                $this->repository->getStockageName(),
-                $this->repository->getDeletedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getDeletedColumn() 
             ),
             $this->convertDate($date)
         );
@@ -123,8 +123,8 @@ class SoftDeletable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` > ?',
-                $this->repository->getStockageName(),
-                $this->repository->getDeletedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getDeletedColumn() 
             ),
             $this->convertDate($date)
         );
@@ -143,8 +143,8 @@ class SoftDeletable implements FindableExtensionInterface
         $this->findable->where(
             sprintf(
                 '`%s`.`%s` BETWEEN ? AND ?',
-                $this->repository->getStockageName(),
-                $this->repository->getDeletedColumn() 
+                $this->model->getStockageName(),
+                $this->model->getDeletedColumn() 
             ),
             $this->convertDate($start),
             $this->convertDate($end)
@@ -163,12 +163,12 @@ class SoftDeletable implements FindableExtensionInterface
         if ($date instanceof \DateTime)
         {
             $timestamp = $date->getTimestamp();
-            return date($this->repository->getDeletedFormat(), $timestamp);
+            return date($this->model->getDeletedFormat(), $timestamp);
         }
         else if (is_numeric($date))
         {
             $timestamp = strtotime($date);
-            return date($this->repository->getDeletedFormat(), $timestamp);
+            return date($this->model->getDeletedFormat(), $timestamp);
         }
         
         return $date;

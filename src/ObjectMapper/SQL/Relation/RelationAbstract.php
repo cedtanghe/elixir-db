@@ -2,9 +2,9 @@
 
 namespace Elixir\DB\ObjectMapper\SQL\Relation;
 
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\ObjectMapper\RelationInterfaceMeta;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\Relation\Pivot;
 use Elixir\DB\Query\SQL\JoinClause;
 
@@ -19,12 +19,12 @@ abstract class RelationAbstract implements RelationInterfaceMeta
     protected $type;
 
     /**
-     * @var RepositoryInterface 
+     * @var ActiveRecordInterface 
      */
-    protected $repository;
+    protected $model;
 
     /**
-     * @var string|RepositoryInterface 
+     * @var string|ActiveRecordInterface 
      */
     protected $target;
 
@@ -69,9 +69,9 @@ abstract class RelationAbstract implements RelationInterfaceMeta
     /**
      * {@inheritdoc}
      */
-    public function getRepository()
+    public function getModel()
     {
-        return $this->repository;
+        return $this->model;
     }
 
     /**
@@ -79,11 +79,11 @@ abstract class RelationAbstract implements RelationInterfaceMeta
      */
     public function getTarget() 
     {
-        if (!$this->target instanceof RepositoryInterface) 
+        if (!$this->target instanceof ActiveRecordInterface) 
         {
             $class = $this->target;
             $this->target = $class::factory();
-            $this->target->setConnectionManager($this->repository->getConnectionManager());
+            $this->target->setConnectionManager($this->model->getConnectionManager());
         }
 
         return $this->target;
@@ -111,13 +111,13 @@ abstract class RelationAbstract implements RelationInterfaceMeta
             
             if (null !== $this->pivot) 
             {
-                $this->foreignKey = $this->target->getPrimaryKey();
+                $this->foreignKey = $this->target->getIdentifier();
             }
             else
             {
                 if ($this->type == self::BELONGS_TO)
                 {
-                    $this->foreignKey = $this->target->getPrimaryKey();
+                    $this->foreignKey = $this->target->getIdentifier();
                 }
                 else
                 {
@@ -148,17 +148,17 @@ abstract class RelationAbstract implements RelationInterfaceMeta
         {
             if (null !== $this->pivot)
             {
-                $this->localKey = $this->repository->getPrimaryKey();
+                $this->localKey = $this->model->getIdentifier();
             }
             else
             {
                 if ($this->type == self::BELONGS_TO)
                 {
-                    $this->localKey = $this->repository->getStockageName() . '_id';
+                    $this->localKey = $this->model->getStockageName() . '_id';
                 }
                 else
                 {
-                    $this->localKey = $this->repository->getPrimaryKey();
+                    $this->localKey = $this->model->getIdentifier();
                 }
             }
         }
@@ -197,13 +197,13 @@ abstract class RelationAbstract implements RelationInterfaceMeta
                 case self::HAS_MANY:
                     if (true === $this->pivot) 
                     {
-                        $table = $this->repository->getStockageName() . '_' . $this->target->getStockageName();
+                        $table = $this->model->getStockageName() . '_' . $this->target->getStockageName();
                         $this->withPivot(new Pivot($table));
                     }
                     
                     if (null === $this->pivot->getFirstKey()) 
                     {
-                        $this->pivot->setFirstKey($this->repository->getStockageName() . '_id');
+                        $this->pivot->setFirstKey($this->model->getStockageName() . '_id');
                     }
 
                     if (null === $this->pivot->getSecondKey())
@@ -215,7 +215,7 @@ abstract class RelationAbstract implements RelationInterfaceMeta
                 case self::BELONGS_TO_MANY:
                     if (true === $this->pivot) 
                     {
-                        $table = $this->target->getStockageName() . '_' . $this->repository->getStockageName();
+                        $table = $this->target->getStockageName() . '_' . $this->model->getStockageName();
                         $this->withPivot(new Pivot($table));
                     }
             
@@ -226,7 +226,7 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
                     if (null === $this->pivot->getSecondKey())
                     {
-                        $this->pivot->setSecondKey($this->repository->getStockageName() . '_id');
+                        $this->pivot->setSecondKey($this->model->getStockageName() . '_id');
                     }
                     break; 
             }
@@ -347,7 +347,7 @@ abstract class RelationAbstract implements RelationInterfaceMeta
                                 $this->pivot->getPivot(), 
                                 $this->pivot->getFirstKey()
                             ), 
-                            $this->repository->get($this->localKey)
+                            $this->model->get($this->localKey)
                         );
                         
                         $join->on(
@@ -368,7 +368,7 @@ abstract class RelationAbstract implements RelationInterfaceMeta
                                 $this->pivot->getPivot(), 
                                 $this->pivot->getSecondKey()
                             ), 
-                            $this->repository->get($this->localKey)
+                            $this->model->get($this->localKey)
                         );
                         
                         $join->on(
@@ -399,7 +399,7 @@ abstract class RelationAbstract implements RelationInterfaceMeta
      */
     protected function parseQuery(FindableInterface $findable)
     {
-        $value = $this->repository->get($this->localKey);
+        $value = $this->model->get($this->localKey);
 
         if (null === $value)
         {

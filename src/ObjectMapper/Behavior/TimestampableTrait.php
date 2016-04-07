@@ -2,7 +2,9 @@
 
 namespace Elixir\DB\ObjectMapper\Model\Behavior;
 
-use Elixir\DB\ObjectMapper\RepositoryEvent;
+use Elixir\DB\ObjectMapper\ActiveRecordEvent;
+use Elixir\DB\ObjectMapper\EntityEvent;
+use Elixir\DB\ObjectMapper\FindEvent;
 use Elixir\DB\ObjectMapper\SQL\Extension\Timestampable;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\Column;
@@ -45,7 +47,7 @@ trait TimestampableTrait
             {
                 case QueryBuilderInterface::DRIVER_MYSQL:
                 case QueryBuilderInterface::DRIVER_SQLITE:
-                    $this->addListener(RepositoryEvent::PRE_FIND, function(RepositoryEvent $e)
+                    $this->addListener(FindEvent::PRE_FIND, function(FindEvent $e)
                     {
                         $findable = $e->getQuery();
                         $findable->extend(new Timestampable($this));
@@ -54,18 +56,18 @@ trait TimestampableTrait
             }
         }
         
-        $this->addListener(RepositoryEvent::DEFINE_FILLABLE, function(RepositoryEvent $e)
+        $this->addListener(EntityEvent::DEFINE_FILLABLE, function(EntityEvent $e)
         {
             $this->{$this->getCreatedColumn()} = $this->getIgnoreValue();
             $this->{$this->getUpdatedColumn()} = $this->getIgnoreValue();
         });
 
-        $this->addListener(RepositoryEvent::PRE_INSERT, function(RepositoryEvent $e) 
+        $this->addListener(ActiveRecordEvent::PRE_INSERT, function(ActiveRecordEvent $e) 
         {
             $this->touch(false);
         });
         
-        $this->addListener(RepositoryEvent::PRE_UPDATE, function(RepositoryEvent $e) 
+        $this->addListener(ActiveRecordEvent::PRE_UPDATE, function(ActiveRecordEvent $e) 
         {
             $this->touch(false);
         });

@@ -2,7 +2,9 @@
 
 namespace Elixir\DB\ObjectMapper\Model\Behavior;
 
-use Elixir\DB\ObjectMapper\RepositoryEvent;
+use Elixir\DB\ObjectMapper\ActiveRecordEvent;
+use Elixir\DB\ObjectMapper\EntityEvent;
+use Elixir\DB\ObjectMapper\FindEvent;
 use Elixir\DB\ObjectMapper\SQL\Extension\Versionable;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\ColumnFactory;
@@ -54,7 +56,7 @@ trait VersionableTrait
         {
             case QueryBuilderInterface::DRIVER_MYSQL:
             case QueryBuilderInterface::DRIVER_SQLITE:
-                $this->addListener(RepositoryEvent::PRE_FIND, function(RepositoryEvent $e)
+                $this->addListener(FindEvent::PRE_FIND, function(FindEvent $e)
                 {
                     $findable = $e->getQuery();
                     $findable->extend(new Versionable($this));
@@ -64,12 +66,12 @@ trait VersionableTrait
                 throw new \RuntimeException(sprintf('The driver "%s" is not supported by this behavior.', $driver));
         }
         
-        $this->addListener(RepositoryEvent::DEFINE_FILLABLE, function(RepositoryEvent $e)
+        $this->addListener(EntityEvent::DEFINE_FILLABLE, function(EntityEvent $e)
         {
             $this->{$this->getVersionedColumn()} = $this->getIgnoreValue();
         });
 
-        $this->addListener(RepositoryEvent::PRE_INSERT, function(RepositoryEvent $e) 
+        $this->addListener(ActiveRecordEvent::PRE_INSERT, function(ActiveRecordEvent $e) 
         {
             if (!$this->isVersioned())
             {
@@ -77,7 +79,7 @@ trait VersionableTrait
             }
         });
         
-        $this->addListener(RepositoryEvent::PRE_UPDATE, function(RepositoryEvent $e) 
+        $this->addListener(ActiveRecordEvent::PRE_UPDATE, function(ActiveRecordEvent $e) 
         {
             if (!$this->isVersioned())
             {

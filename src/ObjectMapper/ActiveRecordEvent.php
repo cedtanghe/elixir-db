@@ -4,12 +4,12 @@ namespace Elixir\DB\ObjectMapper;
 
 use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\Query\QueryInterface;
-use Elixir\Dispatcher\EntityEvent;
+use Elixir\Dispatcher\Event;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class RepositoryEvent extends EntityEvent
+class ActiveRecordEvent extends Event
 {
     /**
      * @var string
@@ -55,21 +55,6 @@ class RepositoryEvent extends EntityEvent
      * @var string
      */
     const DELETE = 'delete';
-    
-    /**
-     * @var string
-     */
-    const PRE_FIND = 'pre_find';
-    
-    /**
-     * @var string
-     */
-    const PARSE_QUERY_FIND = 'parse_query_find';
-
-    /**
-     * @var string
-     */
-    const FIND = 'find';
     
     /**
      * @var QueryInterface|FindableInterface

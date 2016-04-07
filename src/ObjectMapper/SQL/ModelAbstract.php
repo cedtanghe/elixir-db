@@ -3,11 +3,11 @@
 namespace Elixir\DB\ObjectMapper\SQL;
 
 use Elixir\DB\ConnectionManager;
+use Elixir\DB\ObjectMapper\ActiveRecordEvent;
+use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\EntityAbstract;
 use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
-use Elixir\DB\ObjectMapper\RepositoryEvent;
-use Elixir\DB\ObjectMapper\RepositoryInterface;
 use Elixir\DB\ObjectMapper\SQL\Select;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
@@ -16,7 +16,7 @@ use Elixir\STDLib\StringUtils;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-abstract class ModelAbstract extends EntityAbstract implements RepositoryInterface 
+abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInterface 
 {
     /**
      * @var string
@@ -175,7 +175,7 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function getPrimaryKey() 
+    public function getIdentifier() 
     {
         return $this->primaryKey;
     }
@@ -256,10 +256,10 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     {
         if ($this->isReadOnly())
         {
-            throw new \LogicException('This repository is read-only.');
+            throw new \LogicException('This model is read-only.');
         }
         
-        $event = new RepositoryEvent(RepositoryEvent::PRE_INSERT);
+        $event = new ActiveRecordEvent(ActiveRecordEvent::PRE_INSERT);
         $this->dispatch($event);
         
         if (!$event->isQueryExecuted())
@@ -293,8 +293,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
             $query = $DB->createInsert('`' . $this->table . '`');
             $query->values($values, SQLInterface::VALUES_SET);
 
-            $event = new RepositoryEvent(
-                RepositoryEvent::PARSE_QUERY_INSERT, 
+            $event = new ActiveRecordEvent(
+                ActiveRecordEvent::PARSE_QUERY_INSERT, 
                 ['query' => $query]
             );
 
@@ -323,8 +323,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
         }
         
         $this->dispatch(
-            new RepositoryEvent(
-                RepositoryEvent::INSERT, 
+            new ActiveRecordEvent(
+                ActiveRecordEvent::INSERT, 
                 [
                     'query_executed' => true,
                     'query_success' => $result
@@ -348,10 +348,10 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     {
         if ($this->isReadOnly()) 
         {
-            throw new \LogicException('This repository is read-only.');
+            throw new \LogicException('This model is read-only.');
         }
         
-        $event = new RepositoryEvent(RepositoryEvent::PRE_UPDATE);
+        $event = new ActiveRecordEvent(ActiveRecordEvent::PRE_UPDATE);
         $this->dispatch($event);
         
         if (!$event->isQueryExecuted())
@@ -359,8 +359,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
             if (!$this->isModified(self::SYNC_FILLABLE)) 
             {
                 $this->dispatch(
-                    new RepositoryEvent(
-                        RepositoryEvent::UPDATE, 
+                    new ActiveRecordEvent(
+                        ActiveRecordEvent::UPDATE, 
                         [
                             'query_executed' => false,
                             'query_success' => true
@@ -396,8 +396,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
             if (count($values) == 0) 
             {
                 $this->dispatch(
-                    new RepositoryEvent(
-                        RepositoryEvent::UPDATE, 
+                    new ActiveRecordEvent(
+                        ActiveRecordEvent::UPDATE, 
                         [
                             'query_executed' => false,
                             'query_success' => true
@@ -430,8 +430,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
                 $query->where(sprintf('`%s`.`%s` = ?', $this->table, $key), $this->get($key));
             }
 
-            $event = new RepositoryEvent(
-                RepositoryEvent::PARSE_QUERY_UPDATE, 
+            $event = new ActiveRecordEvent(
+                ActiveRecordEvent::PARSE_QUERY_UPDATE, 
                 ['query' => $query]
             );
 
@@ -447,8 +447,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
         }
         
         $this->dispatch(
-            new RepositoryEvent(
-                RepositoryEvent::UPDATE, 
+            new ActiveRecordEvent(
+                ActiveRecordEvent::UPDATE, 
                 [
                     'query_executed' => true,
                     'query_success' => $result
@@ -472,10 +472,10 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
     {
         if ($this->isReadOnly()) 
         {
-            throw new \LogicException('This repository is read-only.');
+            throw new \LogicException('This model is read-only.');
         }
         
-        $event = new RepositoryEvent(RepositoryEvent::PRE_DELETE);
+        $event = new ActiveRecordEvent(ActiveRecordEvent::PRE_DELETE);
         $this->dispatch($event);
         
         if (!$event->isQueryExecuted())
@@ -501,8 +501,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
                 $query->where(sprintf('`%s`.`%s` = ?', $this->table, $key), $this->get($key));
             }
 
-            $event = new RepositoryEvent(
-                RepositoryEvent::PARSE_QUERY_DELETE, 
+            $event = new ActiveRecordEvent(
+                ActiveRecordEvent::PARSE_QUERY_DELETE, 
                 ['query' => $query]
             );
 
@@ -523,8 +523,8 @@ abstract class ModelAbstract extends EntityAbstract implements RepositoryInterfa
         }
         
         $this->dispatch(
-            new RepositoryEvent(
-                RepositoryEvent::DELETE, 
+            new ActiveRecordEvent(
+                ActiveRecordEvent::DELETE, 
                 [
                     'query_executed' => true,
                     'query_success' => $result
