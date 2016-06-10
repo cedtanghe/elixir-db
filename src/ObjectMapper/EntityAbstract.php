@@ -4,7 +4,7 @@ namespace Elixir\DB\ObjectMapper;
 
 use Elixir\DB\ObjectMapper\EntityEvent;
 use Elixir\Dispatcher\DispatcherTrait;
-use Elixir\STDLib\StringUtils;
+use function Elixir\STDLib\camelize;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -486,7 +486,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
         
         if (isset($options['format']))
         {
-            $data = $this->{'to' . StringUtils::camelize($options['format'])}($data);
+            $data = $this->{'to' . camelize($options['format'])}($data);
         }
         
         return $data;
@@ -565,7 +565,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
         } 
         else 
         {
-            $method = 'get' . StringUtils::camelize($key);
+            $method = 'get' . camelize($key);
 
             if (method_exists($this, $method)) 
             {
@@ -599,7 +599,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
         } 
         else 
         {
-            $method = 'set' . StringUtils::camelize($key);
+            $method = 'set' . camelize($key);
 
             if (method_exists($this, $method)) 
             {

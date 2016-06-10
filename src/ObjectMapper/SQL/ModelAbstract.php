@@ -11,7 +11,7 @@ use Elixir\DB\ObjectMapper\RelationInterface;
 use Elixir\DB\ObjectMapper\SQL\Select;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
-use Elixir\STDLib\StringUtils;
+use function Elixir\STDLib\camelize;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -619,7 +619,7 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
         
         if (isset($options['format']))
         {
-            $data = $this->{'to' . StringUtils::camelize($options['format'])}($data);
+            $data = $this->{'to' . camelize($options['format'])}($data);
         }
         
         return $data;

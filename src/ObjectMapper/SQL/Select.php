@@ -11,7 +11,7 @@ use Elixir\DB\ObjectMapper\RelationInterfaceMeta;
 use Elixir\DB\ObjectMapper\SQL\EagerLoad;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
-use Elixir\STDLib\StringUtils;
+use function Elixir\STDLib\camelize;
 
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
@@ -233,7 +233,7 @@ class Select implements FindableInterface
             }
 
             array_unshift($options, $this);
-            call_user_func_array([$this->model, 'scope' . StringUtils::camelize($method)], $options);
+            call_user_func_array([$this->model, 'scope' . camelize($method)], $options);
             
             $this->scopes[] = $method;
         }
@@ -426,7 +426,7 @@ class Select implements FindableInterface
             
             foreach ($this->load as $member => $arguments) 
             {
-                $method = 'load' . StringUtils::camelize($member);
+                $method = 'load' . camelize($member);
 
                 if (method_exists($model, $method))
                 {
