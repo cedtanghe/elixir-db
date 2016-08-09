@@ -60,7 +60,7 @@ class PDO extends ResultSetAbstract
      */
     public function count()
     {
-        return $this->resource->columnCount();
+        return $this->resource->rowCount();
     }
     
     /**
