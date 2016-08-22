@@ -9,20 +9,19 @@ use Elixir\DB\Query\SQL\OrderTrait;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Delete extends BaseDelete 
+class Delete extends BaseDelete
 {
     use OrderTrait;
     use LimitTrait;
-    
+
     /**
      * {@inheritdoc}
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'order':
                 $this->order = [];
                 break;
@@ -36,14 +35,13 @@ class Delete extends BaseDelete
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'order':
                 return $this->order = [];
             case 'limit':
@@ -51,19 +49,18 @@ class Delete extends BaseDelete
             case 'offset':
                 return $this->offset;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'order':
                 $this->order = array_merge($this->order, $data);
                 break;
@@ -74,17 +71,17 @@ class Delete extends BaseDelete
                 $this->offset($data);
                 break;
         }
-        
+
         return $this;
     }
-   
+
     /**
      * {@inheritdoc}
      */
     public function render()
     {
-        $SQL = 'DELETE FROM ' . "\n";
-        $SQL .= $this->table . ' ' . "\n";
+        $SQL = 'DELETE FROM '."\n";
+        $SQL .= $this->table.' '."\n";
         $SQL .= $this->renderSet();
         $SQL .= $this->renderWhere();
         $SQL .= $this->renderOrder();
@@ -92,7 +89,7 @@ class Delete extends BaseDelete
 
         return trim($this->parseAlias($SQL));
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -100,18 +97,16 @@ class Delete extends BaseDelete
     {
         $SQL = '';
 
-        if (count($this->order) > 0) 
-        {
+        if (count($this->order) > 0) {
             $SQL .= 'ORDER BY ';
             $first = true;
 
-            foreach ($this->order as $order) 
-            {
-                $SQL .= ($first ? '' : ', ') . $order['column'] . (self::ORDER_NONE === $order['type'] ? '' : ' COLLATE NOCASE ' . $order['type']);
+            foreach ($this->order as $order) {
+                $SQL .= ($first ? '' : ', ').$order['column'].(self::ORDER_NONE === $order['type'] ? '' : ' COLLATE NOCASE '.$order['type']);
                 $first = false;
             }
 
-            $SQL .= ' ' . "\n";
+            $SQL .= ' '."\n";
         }
 
         return $SQL;

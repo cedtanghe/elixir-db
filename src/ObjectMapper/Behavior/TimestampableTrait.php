@@ -22,57 +22,48 @@ trait TimestampableTrait
     public static function build(CreateTable $create)
     {
         $r = static::factory();
-        
+
         $create->column(
             ColumnFactory::timestamp($r->getCreatedColumn(), Column::CURRENT_TIMESTAMP, null, false)
         );
-        
+
         $create->column(
             ColumnFactory::timestamp($r->getUpdatedColumn(), Column::CURRENT_TIMESTAMP, Column::UPDATE_CURRENT_TIMESTAMP, false)
         );
     }
-    
-    /**
-     * @return void
-     */
+
     public function bootTimestampableTrait()
     {
         $DB = $this->getConnection();
-        
-        if (method_exists($DB, 'getDriver'))
-        {
+
+        if (method_exists($DB, 'getDriver')) {
             $driver = $DB->getDriver();
-            
-            switch ($driver) 
-            {
+
+            switch ($driver) {
                 case QueryBuilderInterface::DRIVER_MYSQL:
                 case QueryBuilderInterface::DRIVER_SQLITE:
-                    $this->addListener(FindEvent::PRE_FIND, function(FindEvent $e)
-                    {
+                    $this->addListener(FindEvent::PRE_FIND, function (FindEvent $e) {
                         $findable = $e->getQuery();
                         $findable->extend(new Timestampable($this));
                     });
                     break;
             }
         }
-        
-        $this->addListener(EntityEvent::DEFINE_FILLABLE, function(EntityEvent $e)
-        {
+
+        $this->addListener(EntityEvent::DEFINE_FILLABLE, function (EntityEvent $e) {
             $this->{$this->getCreatedColumn()} = $this->getIgnoreValue();
             $this->{$this->getUpdatedColumn()} = $this->getIgnoreValue();
         });
 
-        $this->addListener(ActiveRecordEvent::PRE_INSERT, function(ActiveRecordEvent $e) 
-        {
+        $this->addListener(ActiveRecordEvent::PRE_INSERT, function (ActiveRecordEvent $e) {
             $this->touch(false);
         });
-        
-        $this->addListener(ActiveRecordEvent::PRE_UPDATE, function(ActiveRecordEvent $e) 
-        {
+
+        $this->addListener(ActiveRecordEvent::PRE_UPDATE, function (ActiveRecordEvent $e) {
             $this->touch(false);
         });
     }
-    
+
     /**
      * @return string
      */
@@ -80,7 +71,7 @@ trait TimestampableTrait
     {
         return 'created_at';
     }
-    
+
     /**
      * @return string
      */
@@ -88,7 +79,7 @@ trait TimestampableTrait
     {
         return 'Y-m-d H:i:s';
     }
-    
+
     /**
      * @return string
      */
@@ -96,7 +87,7 @@ trait TimestampableTrait
     {
         return 'updated_at';
     }
-    
+
     /**
      * @return string
      */
@@ -106,23 +97,20 @@ trait TimestampableTrait
     }
 
     /**
-     * @param boolean $save
-     * @return boolean
+     * @param bool $save
+     *
+     * @return bool
      */
-    public function touch($save = false) 
+    public function touch($save = false)
     {
-        if ($this->{$this->getCreatedColumn()} === $this->getIgnoreValue()) 
-        {
+        if ($this->{$this->getCreatedColumn()} === $this->getIgnoreValue()) {
             $this->{$this->getCreatedColumn()} = date($this->getCreatedFormat());
             $this->{$this->getUpdatedColumn()} = date($this->getUpdatedFormat(), strtotime($this->{$this->getCreatedColumn()}));
-        } 
-        else 
-        {
+        } else {
             $this->{$this->getUpdatedColumn()} = date($this->getUpdatedFormat());
         }
 
-        if ($save) 
-        {
+        if ($save) {
             return $this->save();
         }
 

@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper;
 
-use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\Query\QueryInterface;
 use Elixir\Dispatcher\Event;
 
@@ -15,7 +14,7 @@ class FindEvent extends Event
      * @var string
      */
     const PRE_FIND = 'pre_find';
-    
+
     /**
      * @var string
      */
@@ -25,24 +24,25 @@ class FindEvent extends Event
      * @var string
      */
     const FIND = 'find';
-    
+
     /**
      * @var QueryInterface|FindableInterface
      */
     protected $query;
-    
+
     /**
      * {@inheritdoc}
+     *
      * @param array $params
      */
-    public function __construct($type, array $params = []) 
+    public function __construct($type, array $params = [])
     {
         parent::__construct($type);
 
         $params += ['query' => null];
         $this->query = $params['query'];
     }
-    
+
     /**
      * @return QueryInterface|FindableInterface
      */
@@ -50,11 +50,11 @@ class FindEvent extends Event
     {
         return $this->query;
     }
-    
+
     /**
      * @param QueryInterface|FindableInterface $value
      */
-    public function setQuery($value) 
+    public function setQuery($value)
     {
         $this->query = $value;
     }

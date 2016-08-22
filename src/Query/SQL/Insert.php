@@ -2,15 +2,13 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\SQLAbstract;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
 class Insert extends SQLAbstract
 {
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $raw = false;
 
@@ -25,69 +23,62 @@ class Insert extends SQLAbstract
     protected $values = null;
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return Insert
      */
-    public function raw($value) 
+    public function raw($value)
     {
         $this->raw = $value;
+
         return $this;
     }
 
     /**
      * @param array $columns
+     *
      * @return Insert
      */
-    public function columns(array $columns) 
+    public function columns(array $columns)
     {
         $this->columns = $columns;
+
         return $this;
     }
-    
+
     /**
      * @param SQLInterface|string|array $values
-     * @param string $type
+     * @param string                    $type
+     *
      * @return Insert
      */
-    public function values($values, $type = self::VALUES_SET) 
+    public function values($values, $type = self::VALUES_SET)
     {
-        if ((is_string($values) && false !== strpos(strtoupper($values), 'SELECT')) || $values instanceof SQLInterface) 
-        {
+        if ((is_string($values) && false !== strpos(strtoupper($values), 'SELECT')) || $values instanceof SQLInterface) {
             $this->values = $values;
 
-            if ($values instanceof SQLInterface) 
-            {
+            if ($values instanceof SQLInterface) {
                 $this->values = $this->values->getQuery();
             }
-        }
-        else 
-        {
-            if ($type == self::VALUES_SET || !is_array($this->values)) 
-            {
+        } else {
+            if ($type == self::VALUES_SET || !is_array($this->values)) {
                 $this->values = [];
             }
 
             $columns = false;
 
-            foreach ((array)$values as $key => $value) 
-            {
-                if (!$columns) 
-                {
-                    if (is_string($key))
-                    {
+            foreach ((array) $values as $key => $value) {
+                if (!$columns) {
+                    if (is_string($key)) {
                         $this->columns(array_keys($values));
                         $columns = true;
                     }
                 }
 
-                if (is_array($value)) 
-                {
-                    if (!$columns) 
-                    {
-                        foreach ($value as $k => $v) 
-                        {
-                            if (is_string($k)) 
-                            {
+                if (is_array($value)) {
+                    if (!$columns) {
+                        foreach ($value as $k => $v) {
+                            if (is_string($k)) {
                                 $this->columns(array_keys($value));
                                 $columns = true;
                             }
@@ -97,9 +88,7 @@ class Insert extends SQLAbstract
                     }
 
                     $this->values[] = array_values($value);
-                } 
-                else 
-                {
+                } else {
                     $this->values[] = array_values($values);
                     break;
                 }
@@ -111,12 +100,12 @@ class Insert extends SQLAbstract
 
     /**
      * @param string $part
+     *
      * @return Insert
      */
-    public function reset($part) 
+    public function reset($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 $this->table = null;
                 break;
@@ -137,15 +126,15 @@ class Insert extends SQLAbstract
 
         return $this;
     }
-    
+
     /**
      * @param string $part
+     *
      * @return mixed
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 return $this->table;
             case 'alias':
@@ -155,19 +144,19 @@ class Insert extends SQLAbstract
             case 'values':
                 return $this->values;
         }
-        
+
         return null;
     }
-    
+
     /**
-     * @param mixed $data
+     * @param mixed  $data
      * @param string $part
+     *
      * @return Insert
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 $this->table($data);
                 break;
@@ -182,7 +171,7 @@ class Insert extends SQLAbstract
                 $this->values($data, self::VALUES_ADD);
                 break;
         }
-        
+
         return $this;
     }
 
@@ -191,8 +180,8 @@ class Insert extends SQLAbstract
      */
     public function render()
     {
-        $SQL = 'INSERT ' . "\n";
-        $SQL .= 'INTO ' . $this->table . ' ' . "\n";
+        $SQL = 'INSERT '."\n";
+        $SQL .= 'INTO '.$this->table.' '."\n";
         $SQL .= $this->renderColumns();
         $SQL .= $this->renderValues();
 
@@ -206,9 +195,8 @@ class Insert extends SQLAbstract
     {
         $SQL = '';
 
-        if (!empty($this->values) && count($this->columns) > 0) 
-        {
-            $SQL .= '(' . implode(', ' . "\n", $this->columns) . ') ' . "\n";
+        if (!empty($this->values) && count($this->columns) > 0) {
+            $SQL .= '('.implode(', '."\n", $this->columns).') '."\n";
         }
 
         return $SQL;
@@ -217,38 +205,31 @@ class Insert extends SQLAbstract
     /**
      * @return string
      */
-    protected function renderValues() 
+    protected function renderValues()
     {
         $SQL = '';
 
-        if (empty($this->values)) 
-        {
+        if (empty($this->values)) {
             $SQL .= 'DEFAULT VALUES';
         }
-        
-        if (is_string($this->values)) 
-        {
-            $SQL .= '(' . $this->values . ') ' . "\n";
-        } 
-        else
-        {
+
+        if (is_string($this->values)) {
+            $SQL .= '('.$this->values.') '."\n";
+        } else {
             $SQL .= 'VALUES ';
             $first = true;
 
-            foreach ($this->values as $values) 
-            {
-                if (!$this->raw) 
-                {
+            foreach ($this->values as $values) {
+                if (!$this->raw) {
                     $values = array_map(
-                        function($value) 
-                        {
+                        function ($value) {
                             return $this->quote($value);
-                        }, 
+                        },
                         $values
                     );
                 }
 
-                $SQL .= ($first ? '' : ', ') . '(' . implode(', ' . "\n", $values) . ') ' . "\n";
+                $SQL .= ($first ? '' : ', ').'('.implode(', '."\n", $values).') '."\n";
                 $first = false;
             }
         }

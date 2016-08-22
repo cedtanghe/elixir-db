@@ -5,25 +5,25 @@ namespace Elixir\DB;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-interface MigrationInterface 
+interface MigrationInterface
 {
     /**
-     * @return integer
+     * @return int
      */
     public function getOrder();
-    
+
     /**
      * @return string
      */
     public function getDescription();
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     public function up();
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     public function down();
 }

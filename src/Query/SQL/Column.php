@@ -5,7 +5,7 @@ namespace Elixir\DB\Query\SQL;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Column 
+class Column
 {
     /**
      * @var string
@@ -238,12 +238,12 @@ class Column
     protected $attribute;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $nullable = false;
 
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $autoIncrement = false;
 
@@ -258,19 +258,18 @@ class Column
      */
     public function __construct($name = null, $type = null)
     {
-        if (null !== $name) 
-        {
+        if (null !== $name) {
             $this->setName($name);
         }
 
-        if (null !== $type) 
-        {
+        if (null !== $type) {
             $this->setType($type);
         }
     }
 
     /**
      * @param string $value
+     *
      * @return Column
      */
     public function setName($value)
@@ -288,106 +287,118 @@ class Column
 
     /**
      * @param string $value
+     *
      * @return Column
      */
-    public function setType($value) 
+    public function setType($value)
     {
         $this->type = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getType() 
+    public function getType()
     {
         return $this->type;
     }
 
     /**
      * @param mixed $value
+     *
      * @return Column
      */
     public function setValue($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getValue() 
+    public function getValue()
     {
         return $this->value;
     }
 
     /**
      * @param mixed $value
+     *
      * @return Column
      */
-    public function setDefault($value) 
+    public function setDefault($value)
     {
         $this->default = $value;
+
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getDefault() 
+    public function getDefault()
     {
         return $this->default;
     }
 
     /**
      * @param string $value
+     *
      * @return Column
      */
-    public function setCollating($value) 
+    public function setCollating($value)
     {
         $this->collation = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getCollating() 
+    public function getCollating()
     {
         return $this->collation;
     }
 
     /**
      * @param string $value
+     *
      * @return Column
      */
-    public function setAttribute($value) 
+    public function setAttribute($value)
     {
         $this->attribute = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getAttribute() 
+    public function getAttribute()
     {
         return $this->attribute;
     }
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return Column
      */
-    public function setNullable($value) 
+    public function setNullable($value)
     {
         $this->nullable = $value;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isNullable()
     {
@@ -395,17 +406,19 @@ class Column
     }
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return Column
      */
     public function setAutoIncrement($value)
     {
         $this->autoIncrement = $value;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isAutoIncrement()
     {
@@ -414,18 +427,20 @@ class Column
 
     /**
      * @param string $value
+     *
      * @return Column
      */
-    public function setComment($value) 
+    public function setComment($value)
     {
         $this->comment = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getComment() 
+    public function getComment()
     {
         return $this->comment;
     }

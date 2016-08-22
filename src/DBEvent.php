@@ -8,7 +8,7 @@ use Elixir\Dispatcher\Event;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class DBEvent extends Event 
+class DBEvent extends Event
 {
     /**
      * @var string
@@ -21,51 +21,52 @@ class DBEvent extends Event
     const QUERY = 'query';
 
     /**
-     * @var QueryInterface|string 
+     * @var QueryInterface|string
      */
     protected $query;
 
     /**
-     * @var array 
+     * @var array
      */
     protected $bindings;
 
     /**
-     * @var integer 
+     * @var int
      */
     protected $elapsedTime;
 
     /**
      * {@inheritdoc}
+     *
      * @param array $params
      */
-    public function __construct($type, array $params = []) 
+    public function __construct($type, array $params = [])
     {
         parent::__construct($type);
 
         $params += [
             'query' => null,
             'bindings' => [],
-            'elapsed_time' => 0
+            'elapsed_time' => 0,
         ];
-        
+
         $this->query = $params['query'];
         $this->bindings = $params['bindings'];
         $this->elapsedTime = $params['elapsed_time'];
     }
-    
+
     /**
      * @return QueryInterface|string
      */
-    public function getQuery() 
+    public function getQuery()
     {
         return $this->query;
     }
-    
+
     /**
      * @param QueryInterface|string $value
      */
-    public function setQuery($value) 
+    public function setQuery($value)
     {
         $this->query = $value;
     }
@@ -73,23 +74,23 @@ class DBEvent extends Event
     /**
      * @return array
      */
-    public function getBindings() 
+    public function getBindings()
     {
         return $this->bindings;
     }
-    
+
     /**
      * @param array $values
      */
-    public function setBindings(array $values) 
+    public function setBindings(array $values)
     {
         $this->bindings = $values;
     }
-    
+
     /**
-     * @return integer
+     * @return int
      */
-    public function getElapsedTime() 
+    public function getElapsedTime()
     {
         return $this->elapsedTime;
     }

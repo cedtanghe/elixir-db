@@ -15,7 +15,7 @@ class Relation implements RelationInterface
     protected $related;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $filled = false;
 
@@ -43,10 +43,10 @@ class Relation implements RelationInterface
     /**
      * {@inheritdoc}
      */
-    public function setRelated($value, array $options = []) 
+    public function setRelated($value, array $options = [])
     {
         $options += ['filled' => true];
-        
+
         $this->related = $value;
         $this->filled = $options['filled'];
     }

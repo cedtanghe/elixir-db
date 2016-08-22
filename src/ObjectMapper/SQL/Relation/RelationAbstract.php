@@ -5,7 +5,6 @@ namespace Elixir\DB\ObjectMapper\SQL\Relation;
 use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\FindableInterface;
 use Elixir\DB\ObjectMapper\RelationInterfaceMeta;
-use Elixir\DB\ObjectMapper\SQL\Relation\Pivot;
 use Elixir\DB\Query\SQL\JoinClause;
 
 /**
@@ -19,32 +18,32 @@ abstract class RelationAbstract implements RelationInterfaceMeta
     protected $type;
 
     /**
-     * @var ActiveRecordInterface 
+     * @var ActiveRecordInterface
      */
     protected $model;
 
     /**
-     * @var string|ActiveRecordInterface 
+     * @var string|ActiveRecordInterface
      */
     protected $target;
 
     /**
-     * @var string 
+     * @var string
      */
     protected $foreignKey;
 
     /**
-     * @var string 
+     * @var string
      */
     protected $localKey;
 
     /**
-     * @var string|boolean|Pivot 
+     * @var string|bool|Pivot
      */
     protected $pivot;
 
     /**
-     * @var array 
+     * @var array
      */
     protected $criterias = [];
 
@@ -54,7 +53,7 @@ abstract class RelationAbstract implements RelationInterfaceMeta
     protected $related;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $filled = false;
 
@@ -77,10 +76,9 @@ abstract class RelationAbstract implements RelationInterfaceMeta
     /**
      * {@inheritdoc}
      */
-    public function getTarget() 
+    public function getTarget()
     {
-        if (!$this->target instanceof ActiveRecordInterface) 
-        {
+        if (!$this->target instanceof ActiveRecordInterface) {
             $class = $this->target;
             $this->target = $class::factory();
             $this->target->setConnectionManager($this->model->getConnectionManager());
@@ -91,11 +89,13 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param string $value
+     *
      * @return RelationAbstract
      */
     public function setForeignKey($value)
     {
         $this->foreignKey = $value;
+
         return $this;
     }
 
@@ -104,24 +104,17 @@ abstract class RelationAbstract implements RelationInterfaceMeta
      */
     public function getForeignKey()
     {
-        if (null === $this->foreignKey) 
-        {
+        if (null === $this->foreignKey) {
             // Define target
             $this->getTarget();
-            
-            if (null !== $this->pivot) 
-            {
+
+            if (null !== $this->pivot) {
                 $this->foreignKey = $this->target->getIdentifier();
-            }
-            else
-            {
-                if ($this->type == self::BELONGS_TO)
-                {
+            } else {
+                if ($this->type == self::BELONGS_TO) {
                     $this->foreignKey = $this->target->getIdentifier();
-                }
-                else
-                {
-                    $this->foreignKey = $this->target->getStockageName() . '_id';
+                } else {
+                    $this->foreignKey = $this->target->getStockageName().'_id';
                 }
             }
         }
@@ -131,104 +124,92 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param string $value
+     *
      * @return RelationAbstract
      */
     public function setLocalKey($value)
     {
         $this->localKey = $value;
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getLocalKey() 
+    public function getLocalKey()
     {
-        if (null === $this->localKey)
-        {
-            if (null !== $this->pivot)
-            {
+        if (null === $this->localKey) {
+            if (null !== $this->pivot) {
                 $this->localKey = $this->model->getIdentifier();
-            }
-            else
-            {
-                if ($this->type == self::BELONGS_TO)
-                {
-                    $this->localKey = $this->model->getStockageName() . '_id';
-                }
-                else
-                {
+            } else {
+                if ($this->type == self::BELONGS_TO) {
+                    $this->localKey = $this->model->getStockageName().'_id';
+                } else {
                     $this->localKey = $this->model->getIdentifier();
                 }
             }
         }
-        
+
         return $this->localKey;
     }
 
     /**
      * @param Pivot $pivot
+     *
      * @return RelationAbstract
      */
     public function withPivot(Pivot $pivot)
     {
         $this->pivot = $pPivot;
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPivot() 
+    public function getPivot()
     {
-        if (null !== $this->pivot) 
-        {
+        if (null !== $this->pivot) {
             // Define target
             $this->getTarget();
-            
-            if (is_string($this->pivot)) 
-            {
+
+            if (is_string($this->pivot)) {
                 $this->withPivot(new Pivot($this->pivot));
             }
-            
-            switch ($this->type) 
-            {
+
+            switch ($this->type) {
                 case self::HAS_ONE:
                 case self::HAS_MANY:
-                    if (true === $this->pivot) 
-                    {
-                        $table = $this->model->getStockageName() . '_' . $this->target->getStockageName();
+                    if (true === $this->pivot) {
+                        $table = $this->model->getStockageName().'_'.$this->target->getStockageName();
                         $this->withPivot(new Pivot($table));
                     }
-                    
-                    if (null === $this->pivot->getFirstKey()) 
-                    {
-                        $this->pivot->setFirstKey($this->model->getStockageName() . '_id');
+
+                    if (null === $this->pivot->getFirstKey()) {
+                        $this->pivot->setFirstKey($this->model->getStockageName().'_id');
                     }
 
-                    if (null === $this->pivot->getSecondKey())
-                    {
-                        $this->pivot->setSecondKey($this->target->getStockageName() . '_id');
+                    if (null === $this->pivot->getSecondKey()) {
+                        $this->pivot->setSecondKey($this->target->getStockageName().'_id');
                     }
                     break;
                 case self::BELONGS_TO:
                 case self::BELONGS_TO_MANY:
-                    if (true === $this->pivot) 
-                    {
-                        $table = $this->target->getStockageName() . '_' . $this->model->getStockageName();
+                    if (true === $this->pivot) {
+                        $table = $this->target->getStockageName().'_'.$this->model->getStockageName();
                         $this->withPivot(new Pivot($table));
                     }
-            
-                    if (null === $this->pivot->getFirstKey()) 
-                    {
-                        $this->pivot->setFirstKey($this->target->getStockageName() . '_id');
+
+                    if (null === $this->pivot->getFirstKey()) {
+                        $this->pivot->setFirstKey($this->target->getStockageName().'_id');
                     }
 
-                    if (null === $this->pivot->getSecondKey())
-                    {
-                        $this->pivot->setSecondKey($this->model->getStockageName() . '_id');
+                    if (null === $this->pivot->getSecondKey()) {
+                        $this->pivot->setSecondKey($this->model->getStockageName().'_id');
                     }
-                    break; 
+                    break;
             }
         }
 
@@ -237,11 +218,13 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param callable $criteria
+     *
      * @return RelationAbstract
      */
     public function addCriteria(callable $criteria)
     {
         $this->criterias[] = $criteria;
+
         return $this;
     }
 
@@ -259,10 +242,10 @@ abstract class RelationAbstract implements RelationInterfaceMeta
     public function setRelated($value, array $options = [])
     {
         $options = array_merge(
-            ['filled' => true], 
+            ['filled' => true],
             $options
         );
-        
+
         $this->related = $value;
         $this->filled = $options['filled'];
     }
@@ -296,17 +279,15 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
         $findable = $this->target->find();
 
-        if ($this->prepareQuery($findable))
-        {
-            if ($this->extendQuery($findable))
-            {
+        if ($this->prepareQuery($findable)) {
+            if ($this->extendQuery($findable)) {
                 $this->setRelated($this->match($findable), ['filled' => true]);
+
                 return;
             }
         }
 
-        switch ($this->type) 
-        {
+        switch ($this->type) {
             case self::HAS_ONE:
             case self::BELONGS_TO:
                 $this->setRelated(null, ['filled' => true]);
@@ -320,7 +301,8 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param FindableInterface $findable
-     * @return boolean
+     *
+     * @return bool
      */
     protected function prepareQuery(FindableInterface $findable)
     {
@@ -329,33 +311,32 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param FindableInterface $findable
-     * @return boolean
+     *
+     * @return bool
      */
-    protected function parsePivot(FindableInterface $findable) 
+    protected function parsePivot(FindableInterface $findable)
     {
         $findable->innerJoin(
-            $this->pivot->getPivot(), 
-            function(JoinClause $join)
-            {
-                switch ($this->type) 
-                {
+            $this->pivot->getPivot(),
+            function (JoinClause $join) {
+                switch ($this->type) {
                     case self::HAS_ONE:
                     case self::HAS_MANY:
                         $join->on(
                             sprintf(
-                                '`%s`.`%s` = ?', 
-                                $this->pivot->getPivot(), 
+                                '`%s`.`%s` = ?',
+                                $this->pivot->getPivot(),
                                 $this->pivot->getFirstKey()
-                            ), 
+                            ),
                             $this->model->get($this->localKey)
                         );
-                        
+
                         $join->on(
                             sprintf(
-                                '`%s`.`%s` = `%s`.`%s`', 
-                                $this->pivot->getPivot(), 
-                                $this->pivot->getSecondKey(), 
-                                $this->target->getStockageName(), 
+                                '`%s`.`%s` = `%s`.`%s`',
+                                $this->pivot->getPivot(),
+                                $this->pivot->getSecondKey(),
+                                $this->target->getStockageName(),
                                 $this->foreignKey
                             )
                         );
@@ -364,27 +345,26 @@ abstract class RelationAbstract implements RelationInterfaceMeta
                     case self::BELONGS_TO_MANY:
                         $join->on(
                             sprintf(
-                                '`%s`.`%s` = ?', 
-                                $this->pivot->getPivot(), 
+                                '`%s`.`%s` = ?',
+                                $this->pivot->getPivot(),
                                 $this->pivot->getSecondKey()
-                            ), 
+                            ),
                             $this->model->get($this->localKey)
                         );
-                        
+
                         $join->on(
                             sprintf(
-                                '`%s`.`%s` = `%s`.`%s`', 
-                                $this->pivot->getPivot(), 
-                                $this->pivot->getFirstKey(), 
-                                $this->target->getStockageName(), 
+                                '`%s`.`%s` = `%s`.`%s`',
+                                $this->pivot->getPivot(),
+                                $this->pivot->getFirstKey(),
+                                $this->target->getStockageName(),
                                 $this->foreignKey
                             )
                         );
                         break;
                 }
 
-                foreach ($this->pivot->getCriterias() as $criteria)
-                {
+                foreach ($this->pivot->getCriterias() as $criteria) {
                     call_user_func_array($criteria, [$join]);
                 }
             }
@@ -395,23 +375,23 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param FindableInterface $findable
-     * @return boolean
+     *
+     * @return bool
      */
     protected function parseQuery(FindableInterface $findable)
     {
         $value = $this->model->get($this->localKey);
 
-        if (null === $value)
-        {
+        if (null === $value) {
             return false;
         }
 
         $findable->where(
             sprintf(
-                '`%s`.`%s` = ?', 
-                $this->target->getStockageName(), 
+                '`%s`.`%s` = ?',
+                $this->target->getStockageName(),
                 $this->foreignKey
-            ), 
+            ),
             $value
         );
 
@@ -420,14 +400,13 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param FindableInterface $findable
-     * @return boolean
+     *
+     * @return bool
      */
     protected function extendQuery(FindableInterface $findable)
     {
-        foreach ($this->criterias as $criteria) 
-        {
-            if (false === call_user_func_array($criteria, [$findable, $this]))
-            {
+        foreach ($this->criterias as $criteria) {
+            if (false === call_user_func_array($criteria, [$findable, $this])) {
                 return false;
             }
         }
@@ -437,12 +416,12 @@ abstract class RelationAbstract implements RelationInterfaceMeta
 
     /**
      * @param FindableInterface $findable
+     *
      * @return mixed
      */
-    protected function match(FindableInterface $findable) 
+    protected function match(FindableInterface $findable)
     {
-        switch ($this->type) 
-        {
+        switch ($this->type) {
             case self::HAS_ONE:
             case self::BELONGS_TO:
                 return $findable->first();

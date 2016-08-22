@@ -2,15 +2,13 @@
 
 namespace Elixir\DB\ResultSet;
 
-use Elixir\DB\ResultSet\ResultSetAbstract;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class PDO extends ResultSetAbstract 
+class PDO extends ResultSetAbstract
 {
     /**
-     * @var integer
+     * @var int
      */
     protected $position = 0;
 
@@ -20,6 +18,7 @@ class PDO extends ResultSetAbstract
     public function rewind()
     {
         $this->position = 0;
+
         return $this->resource->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_FIRST);
     }
 
@@ -34,7 +33,7 @@ class PDO extends ResultSetAbstract
     /**
      * @ignore
      */
-    public function key() 
+    public function key()
     {
         return $this->position;
     }
@@ -44,13 +43,13 @@ class PDO extends ResultSetAbstract
      */
     public function next()
     {
-        return $this->fetch(); 
+        return $this->fetch();
     }
 
     /**
      * @ignore
      */
-    public function valid() 
+    public function valid()
     {
         return $this->position <= $this->count();
     }
@@ -62,7 +61,7 @@ class PDO extends ResultSetAbstract
     {
         return $this->resource->rowCount();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -70,7 +69,7 @@ class PDO extends ResultSetAbstract
     {
         return $this->next();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -78,7 +77,7 @@ class PDO extends ResultSetAbstract
     {
         return $this->resource->fetchAll(\PDO::FETCH_ASSOC);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -86,26 +85,25 @@ class PDO extends ResultSetAbstract
     {
         return $this->resource->fetchColumn($column);
     }
-    
+
     /**
      * @ignore
      */
     public function fetch($fetchStyle = \PDO::FETCH_ASSOC)
     {
         $r = $this->resource->fetch($fetchStyle);
-        
-        if(false !== $r)
-        {
-            $this->position++;
+
+        if (false !== $r) {
+            ++$this->position;
         }
-        
-        return $r; 
+
+        return $r;
     }
-    
+
     /**
      * @ignore
      */
-    public function __call($method, $arguments) 
+    public function __call($method, $arguments)
     {
         return call_user_func_array([$this->resource, $method], $arguments);
     }

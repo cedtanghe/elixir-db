@@ -10,30 +10,30 @@ use Elixir\DB\Query\SQL\Update as BaseUpdate;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Update extends BaseUpdate 
+class Update extends BaseUpdate
 {
     use OrderTrait;
     use LimitTrait;
     use JoinTrait;
-    
+
     /**
      * {@inheritdoc}
+     *
      * @throws \LogicException
      */
     public function offset($offset)
     {
         throw new \LogicException('Not implemented in mysql.');
     }
-   
+
     /**
      * {@inheritdoc}
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'join':
                 $this->join = [];
                 break;
@@ -47,14 +47,13 @@ class Update extends BaseUpdate
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'join':
                 return $this->join;
             case 'order':
@@ -62,19 +61,18 @@ class Update extends BaseUpdate
             case 'limit':
                 return $this->limit;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'join':
                 $this->join = array_merge($this->join, $data);
                 break;
@@ -85,17 +83,17 @@ class Update extends BaseUpdate
                 $this->limit($data);
                 break;
         }
-        
+
         return $this;
     }
-   
+
     /**
      * {@inheritdoc}
      */
     public function render()
     {
-        $SQL = 'UPDATE ' . "\n";
-        $SQL .= $this->table . ' ' . "\n";
+        $SQL = 'UPDATE '."\n";
+        $SQL .= $this->table.' '."\n";
         $SQL .= $this->renderJoin();
         $SQL .= $this->renderSet();
         $SQL .= $this->renderWhere();

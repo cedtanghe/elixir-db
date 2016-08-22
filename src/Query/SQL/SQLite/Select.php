@@ -16,18 +16,16 @@ class Select extends BaseSelect
     {
         $SQL = '';
 
-        if (count($this->order) > 0) 
-        {
+        if (count($this->order) > 0) {
             $SQL .= 'ORDER BY ';
             $first = true;
 
-            foreach ($this->order as $order) 
-            {
-                $SQL .= ($first ? '' : ', ') . $order['column'] . (self::ORDER_NONE === $order['type'] ? '' : ' COLLATE NOCASE ' . $order['type']);
+            foreach ($this->order as $order) {
+                $SQL .= ($first ? '' : ', ').$order['column'].(self::ORDER_NONE === $order['type'] ? '' : ' COLLATE NOCASE '.$order['type']);
                 $first = false;
             }
 
-            $SQL .= ' ' . "\n";
+            $SQL .= ' '."\n";
         }
 
         return $SQL;

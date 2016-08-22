@@ -11,47 +11,50 @@ use Elixir\DB\ResultSet\ResultSetAbstract;
 interface DBInterface
 {
     /**
-     * @return integer
+     * @return int
      */
     public function lastInsertId();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function begin();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function rollBack();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function commit();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function inTransaction();
 
     /**
      * @param mixed $value
-     * @param integer $type
+     * @param int   $type
+     *
      * @return mixed
      */
     public function quote($value, $type = null);
 
     /**
      * @param QueryInterface|string $query
-     * @return integer
+     *
+     * @return int
      */
     public function exec($query);
 
     /**
      * @param QueryInterface|string $query
-     * @param array $bindings
-     * @return ResultSetAbstract|boolean
+     * @param array                 $bindings
+     *
+     * @return ResultSetAbstract|bool
      */
     public function query($query, array $bindings = []);
 }

@@ -2,18 +2,16 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\SQLInterface;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-trait OrderTrait 
+trait OrderTrait
 {
     /**
-     * @var array 
+     * @var array
      */
     protected $order = [];
-    
+
     /**
      * {@inheritdoc}
      */
@@ -21,7 +19,7 @@ trait OrderTrait
     {
         return $this->order($order, self::ORDER_ASCENDING);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -32,16 +30,16 @@ trait OrderTrait
 
     /**
      * @param array|string $order
-     * @param string $type
+     * @param string       $type
+     *
      * @return SQLInterface
      */
-    public function order($order, $type = self::ORDER_ASCENDING) 
+    public function order($order, $type = self::ORDER_ASCENDING)
     {
-        foreach ((array)$order as $order) 
-        {
+        foreach ((array) $order as $order) {
             $this->order[] = ['column' => $order, 'type' => $type];
         }
-        
+
         return $this;
     }
 
@@ -52,18 +50,16 @@ trait OrderTrait
     {
         $SQL = '';
 
-        if (count($this->order) > 0) 
-        {
+        if (count($this->order) > 0) {
             $SQL .= 'ORDER BY ';
             $first = true;
 
-            foreach ($this->order as $order) 
-            {
-                $SQL .= ($first ? '' : ', ') . $order['column'] . (self::ORDER_NONE === $order['type'] ? '' : ' ' . $order['type']);
+            foreach ($this->order as $order) {
+                $SQL .= ($first ? '' : ', ').$order['column'].(self::ORDER_NONE === $order['type'] ? '' : ' '.$order['type']);
                 $first = false;
             }
 
-            $SQL .= ' ' . "\n";
+            $SQL .= ' '."\n";
         }
 
         return $SQL;

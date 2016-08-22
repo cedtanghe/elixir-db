@@ -5,7 +5,7 @@ namespace Elixir\DB\ObjectMapper;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-interface RelationInterface 
+interface RelationInterface
 {
     /**
      * @var string
@@ -21,7 +21,7 @@ interface RelationInterface
      * @var string
      */
     const BELONGS_TO = 'belongs_to';
-    
+
     /**
      * @var string
      */
@@ -49,12 +49,9 @@ interface RelationInterface
     public function getRelated();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFilled();
 
-    /**
-     * @return void
-     */
     public function load();
 }

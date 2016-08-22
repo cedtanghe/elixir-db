@@ -5,7 +5,7 @@ namespace Elixir\DB\Query;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-interface QueryInterface 
+interface QueryInterface
 {
     /**
      * @see QueryInterface::render()

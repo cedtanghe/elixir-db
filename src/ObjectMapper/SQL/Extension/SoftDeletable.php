@@ -10,50 +10,45 @@ use Elixir\DB\ObjectMapper\FindEvent;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class SoftDeletable implements FindableExtensionInterface 
+class SoftDeletable implements FindableExtensionInterface
 {
     /**
-     * @var FindableInterface 
+     * @var FindableInterface
      */
     protected $findable;
-    
+
     /**
-     * @var ActiveRecordInterface 
+     * @var ActiveRecordInterface
      */
     protected $model;
-    
+
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $addConstraint = true;
-    
+
     /**
      * @param ActiveRecordInterface $model
      */
     public function __construct(ActiveRecordInterface $model)
     {
         $this->model = $model;
-        $this->model->addListener(FindEvent::PARSE_QUERY_FIND, function(FindEvent $e)
-        {
-            if($this->addConstraint)
-            {
+        $this->model->addListener(FindEvent::PARSE_QUERY_FIND, function (FindEvent $e) {
+            if ($this->addConstraint) {
                 $hasContraint = false;
-                
-                foreach ($this->findable->get('where') as $where)
-                {
-                    if (false !== strpos($where, $this->model->getDeletedColumn()))
-                    {
+
+                foreach ($this->findable->get('where') as $where) {
+                    if (false !== strpos($where, $this->model->getDeletedColumn())) {
                         $hasContraint = true;
                     }
                 }
-                
-                if (!$hasContraint)
-                {
+
+                if (!$hasContraint) {
                     $this->findable->where(
                         sprintf(
                             '`%s`.`%s` IS NULL',
                             $this->model->getStockageName(),
-                            $this->model->getDeletedColumn() 
+                            $this->model->getDeletedColumn()
                         )
                     );
                 }
@@ -64,20 +59,21 @@ class SoftDeletable implements FindableExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function setFindable(FindableInterface $value) 
+    public function setFindable(FindableInterface $value)
     {
         $this->findable = $value;
     }
-    
+
     /**
      * @return FindableInterface
      */
     public function withTrashed()
     {
         $this->addConstraint = false;
+
         return $this->findable;
     }
-    
+
     /**
      * @return FindableInterface
      */
@@ -87,16 +83,18 @@ class SoftDeletable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` IS NOT NULL',
                 $this->model->getStockageName(),
-                $this->model->getDeletedColumn() 
+                $this->model->getDeletedColumn()
             )
         );
-        
+
         $this->addConstraint = false;
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
+     * @param int|string|\DateTime $date
+     *
      * @return FindableInterface
      */
     public function trashedBefore($date)
@@ -105,17 +103,19 @@ class SoftDeletable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` < ?',
                 $this->model->getStockageName(),
-                $this->model->getDeletedColumn() 
+                $this->model->getDeletedColumn()
             ),
             $this->convertDate($date)
         );
-        
+
         $this->addConstraint = false;
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
+     * @param int|string|\DateTime $date
+     *
      * @return FindableInterface
      */
     public function trashedAfter($date)
@@ -124,18 +124,20 @@ class SoftDeletable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` > ?',
                 $this->model->getStockageName(),
-                $this->model->getDeletedColumn() 
+                $this->model->getDeletedColumn()
             ),
             $this->convertDate($date)
         );
-        
+
         $this->addConstraint = false;
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $start
-     * @param integer|string|\DateTime $end
+     * @param int|string|\DateTime $start
+     * @param int|string|\DateTime $end
+     *
      * @return FindableInterface
      */
     public function trashedBetween($start, $end)
@@ -144,47 +146,48 @@ class SoftDeletable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` BETWEEN ? AND ?',
                 $this->model->getStockageName(),
-                $this->model->getDeletedColumn() 
+                $this->model->getDeletedColumn()
             ),
             $this->convertDate($start),
             $this->convertDate($end)
         );
-        
+
         $this->addConstraint = false;
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
-     * @return integer
+     * @param int|string|\DateTime $date
+     *
+     * @return int
      */
     protected function convertDate($date)
     {
-        if ($date instanceof \DateTime)
-        {
+        if ($date instanceof \DateTime) {
             $timestamp = $date->getTimestamp();
+
             return date($this->model->getDeletedFormat(), $timestamp);
-        }
-        else if (is_numeric($date))
-        {
+        } elseif (is_numeric($date)) {
             $timestamp = strtotime($date);
+
             return date($this->model->getDeletedFormat(), $timestamp);
         }
-        
+
         return $date;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRegisteredMethods() 
+    public function getRegisteredMethods()
     {
         return [
             'withTrashed',
             'onlyTrashed',
             'trashedBefore',
             'trashedAfter',
-            'trashedBetween'
+            'trashedBetween',
         ];
     }
 }

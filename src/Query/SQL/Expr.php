@@ -5,10 +5,11 @@ namespace Elixir\DB\Query\SQL;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Expr 
+class Expr
 {
     /**
      * @param string $expr
+     *
      * @return Expr
      */
     public static function protect($expr)
@@ -17,14 +18,14 @@ class Expr
     }
 
     /**
-     * @var string 
+     * @var string
      */
     protected $expr;
 
     /**
      * @param string $expr
      */
-    public function __construct($expr) 
+    public function __construct($expr)
     {
         $this->expr = $expr;
     }
@@ -32,7 +33,7 @@ class Expr
     /**
      * @return string
      */
-    public function getExpr() 
+    public function getExpr()
     {
         return $this->expr;
     }

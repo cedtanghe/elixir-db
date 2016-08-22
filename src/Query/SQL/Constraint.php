@@ -2,12 +2,10 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\Column;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Constraint 
+class Constraint
 {
     /**
      * @var string
@@ -96,57 +94,58 @@ class Constraint
 
     /**
      * @param string|array $columns
-     * @param string $type
+     * @param string       $type
      */
-    public function __construct($columns = null, $type = null) 
+    public function __construct($columns = null, $type = null)
     {
-        if (null !== $columns)
-        {
-            $this->setColumns((array)$columns);
+        if (null !== $columns) {
+            $this->setColumns((array) $columns);
         }
 
-        if (null !== $type) 
-        {
+        if (null !== $type) {
             $this->setType($type);
         }
     }
 
     /**
      * @param string $value
+     *
      * @return Constraint
      */
-    public function setType($value) 
+    public function setType($value)
     {
         $this->type = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getType() 
+    public function getType()
     {
         return $this->type;
     }
 
     /**
      * @param string $value
+     *
      * @return Constraint
      */
-    public function setName($value) 
+    public function setName($value)
     {
         $this->name = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getName() 
+    public function getName()
     {
-        if (null === $this->name) 
-        {
-            $this->name = strtolower('fk_' . $this->referenceTable . '_' . $this->referenceColumn . '_' . current($this->getColumns()));
+        if (null === $this->name) {
+            $this->name = strtolower('fk_'.$this->referenceTable.'_'.$this->referenceColumn.'_'.current($this->getColumns()));
         }
 
         return $this->name;
@@ -154,14 +153,14 @@ class Constraint
 
     /**
      * @param array $values
+     *
      * @return Constraint
      */
-    public function setColumns(array $values) 
+    public function setColumns(array $values)
     {
         $this->columns = [];
 
-        foreach ($values as $column)
-        {
+        foreach ($values as $column) {
             $this->addColumn($column);
         }
 
@@ -170,15 +169,17 @@ class Constraint
 
     /**
      * @param string|Column $column
+     *
      * @return Constraint
      */
-    public function addColumn($column) 
+    public function addColumn($column)
     {
         if ($column instanceof Column) {
             $column = $column->getName();
         }
 
         $this->columns[] = $column;
+
         return $this;
     }
 
@@ -192,11 +193,13 @@ class Constraint
 
     /**
      * @param string $value
+     *
      * @return Constraint
      */
-    public function setReferenceTable($value) 
+    public function setReferenceTable($value)
     {
         $this->referenceTable = $value;
+
         return $this;
     }
 
@@ -210,29 +213,33 @@ class Constraint
 
     /**
      * @param string $value
+     *
      * @return Constraint
      */
     public function setReferenceColumn($value)
     {
         $this->referenceColumn = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getReferenceColumn() 
+    public function getReferenceColumn()
     {
         return $this->referenceColumn;
     }
 
     /**
      * @param string $value
+     *
      * @return Constraint
      */
     public function setOnDeleteRule($value)
     {
         $this->onDeleteRule = $value;
+
         return $this;
     }
 
@@ -246,18 +253,20 @@ class Constraint
 
     /**
      * @param string $value
+     *
      * @return Constraint
      */
-    public function setOnUpdateRule($value) 
+    public function setOnUpdateRule($value)
     {
         $this->onUpdateRule = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getOnUpdateRule() 
+    public function getOnUpdateRule()
     {
         return $this->onUpdateRule;
     }

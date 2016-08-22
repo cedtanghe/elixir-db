@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\ObjectMapper;
 
-use Elixir\DB\ObjectMapper\EntityEvent;
 use Elixir\Dispatcher\DispatcherTrait;
 use function Elixir\STDLib\camelize;
 
@@ -12,7 +11,7 @@ use function Elixir\STDLib\camelize;
 abstract class EntityAbstract implements EntityInterface, \JsonSerializable
 {
     use DispatcherTrait;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -20,7 +19,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         return new static($config);
     }
-    
+
     /**
      * @var array
      */
@@ -30,12 +29,12 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
      * @var array
      */
     protected static $mutatorsSet = [];
-    
+
     /**
      * @var string
      */
     protected $className;
-    
+
     /**
      * @var mixed
      */
@@ -45,12 +44,12 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
      * @var array
      */
     protected $fillable = [];
-    
+
     /**
      * @var array
      */
     protected $guarded = [];
-    
+
     /**
      * @var array
      */
@@ -65,14 +64,14 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
      * @var string
      */
     protected $state = self::FILLABLE;
-    
+
     /**
      * @param array $config
      */
     public function __construct(array $config = null)
     {
         $this->className = get_class($this);
-        
+
         $this->state = self::FILLABLE;
         $this->defineFillable();
         $this->dispatch(new EntityEvent(EntityEvent::DEFINE_FILLABLE));
@@ -80,30 +79,29 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
         $this->defineGuarded();
         $this->dispatch(new EntityEvent(EntityEvent::DEFINE_GUARDED));
 
-        if (!empty($config)) 
-        {
+        if (!empty($config)) {
             $this->hydrate(
                 isset($config['hydrate']) ? $config['hydrate'] : $config,
                 [
-                    'raw' => true, 
-                    'sync' => false
+                    'raw' => true,
+                    'sync' => false,
                 ]
             );
         }
     }
-    
+
     /**
-     * Declares columns
-     * @return void
+     * Declares columns.
      */
     abstract protected function defineFillable();
-    
+
     /**
-     * Declares relations and others
-     * @return void
+     * Declares relations and others.
      */
-    protected function defineGuarded(){}
-    
+    protected function defineGuarded()
+    {
+    }
+
     /**
      * @return string
      */
@@ -111,7 +109,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         return $this->className;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -127,11 +125,11 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         return $this->ignoreValue;
     }
-    
+
     /**
      * @param string $value
      */
-    public function setState($value) 
+    public function setState($value)
     {
         $this->state = $value;
     }
@@ -139,15 +137,15 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * @return string
      */
-    public function getState() 
+    public function getState()
     {
         return $this->state;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function getFillableKeys() 
+    public function getFillableKeys()
     {
         return $this->fillable;
     }
@@ -159,50 +157,50 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         return $this->guarded;
     }
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isReadOnly() 
+    public function isReadOnly()
     {
         return $this->state == self::READ_ONLY;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isFillable() 
+    public function isFillable()
     {
         return $this->state == self::FILLABLE;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isGuarded()
     {
         return $this->state == self::GUARDED;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function isModified($state = self::SYNC_ALL) 
+    public function isModified($state = self::SYNC_ALL)
     {
         $count = $this->getModified($state);
+
         return count($count) > 0;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getModified($state = self::SYNC_ALL) 
+    public function getModified($state = self::SYNC_ALL)
     {
         $modified = [];
         $providers = [];
-        
-        switch($state)
-        {
+
+        switch ($state) {
             case self::SYNC_FILLABLE:
                 $providers = [$this->fillable];
                 break;
@@ -214,14 +212,11 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 break;
         }
 
-        foreach ($providers as $provider)
-        {
-            foreach ($provider as $f) 
-            {
+        foreach ($providers as $provider) {
+            foreach ($provider as $f) {
                 $value = $this->get($f);
-                
-                if (!array_key_exists($f, $this->original) || $this->original[$f] !== $value) 
-                {
+
+                if (!array_key_exists($f, $this->original) || $this->original[$f] !== $value) {
                     $modified[$f] = $value;
                 }
             }
@@ -229,16 +224,15 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
 
         return $modified;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function sync($state = self::SYNC_ALL) 
+    public function sync($state = self::SYNC_ALL)
     {
         $providers = [];
-        
-        switch($state)
-        {
+
+        switch ($state) {
             case self::SYNC_FILLABLE:
                 $providers = [$this->fillable];
                 break;
@@ -249,11 +243,9 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 $providers = [$this->fillable, $this->guarded];
                 break;
         }
-        
-        foreach ($providers as $provider)
-        {
-            foreach ($provider as $f) 
-            {
+
+        foreach ($providers as $provider) {
+            foreach ($provider as $f) {
                 $this->original[$f] = $this->get($f);
             }
         }
@@ -262,36 +254,30 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function has($key) 
+    public function has($key)
     {
         return array_key_exists($key, $this->data);
     }
 
     /**
      * {@inheritdoc}
+     *
      * @throws \InvalidArgumentException
      */
-    public function set($key, $value) 
+    public function set($key, $value)
     {
-        if ($this->isReadOnly()) 
-        {
-            if (!$this->has($key))
-            {
+        if ($this->isReadOnly()) {
+            if (!$this->has($key)) {
                 throw new \InvalidArgumentException(sprintf('Key "%s" is a not declared property.', $key));
             }
         }
-        
-        if ($this->isFillable()) 
-        {
-            if (!in_array($key, $this->fillable))
-            {
+
+        if ($this->isFillable()) {
+            if (!in_array($key, $this->fillable)) {
                 $this->fillable[] = $key;
             }
-        } 
-        else if ($this->isGuarded()) 
-        {
-            if (!in_array($key, $this->guarded)) 
-            {
+        } elseif ($this->isGuarded()) {
+            if (!in_array($key, $this->guarded)) {
                 $this->guarded[] = $key;
             }
         }
@@ -302,16 +288,15 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null) 
+    public function get($key, $default = null)
     {
-        if (!$this->has($key)) 
-        {
+        if (!$this->has($key)) {
             return is_callable($default) ? call_user_func($default) : $default;
         }
 
         return $this->data[$key];
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -319,46 +304,35 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         $options += [
             'raw' => true,
-            'sync' => true
+            'sync' => true,
         ];
-        
+
         $references = [];
         $entities = [];
 
-        foreach ($data as $key => $value) 
-        {
-            if (false !== strpos($key, self::ENTITY_SEPARATOR)) 
-            {
+        foreach ($data as $key => $value) {
+            if (false !== strpos($key, self::ENTITY_SEPARATOR)) {
                 $reference = null;
                 $segments = explode(self::ENTITY_SEPARATOR, $key);
 
-                if (count($segments) == 3) 
-                {
+                if (count($segments) == 3) {
                     $reference = array_shift($segments);
                     $class = $segments[0];
-                } 
-                else 
-                {
-                    if ($segments[0] != $this->className) 
-                    {
+                } else {
+                    if ($segments[0] != $this->className) {
                         $class = $segments[0];
 
-                        if (!isset($references[$class])) 
-                        {
+                        if (!isset($references[$class])) {
                             $reference = lcfirst(pathinfo($class, PATHINFO_BASENAME));
                             $references[$class] = $reference;
-                        } 
-                        else 
-                        {
+                        } else {
                             $reference = $references[$class];
                         }
                     }
                 }
 
-                if (null !== $reference) 
-                {
-                    if (!isset($entities[$reference])) 
-                    {
+                if (null !== $reference) {
+                    if (!isset($entities[$reference])) {
                         $entities[$reference] = ['class' => $class, 'value' => []];
                     }
 
@@ -367,79 +341,63 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
                 }
             }
 
-            if (is_array($value))
-            {
+            if (is_array($value)) {
                 $value = $this->hydrateCollection($value, $options);
             }
-            
-            if ($options['raw']) 
-            {
+
+            if ($options['raw']) {
                 $this->set($key, $value);
-            } 
-            else 
-            {
+            } else {
                 $this->$key = $value;
             }
         }
 
-        if (count($entities) > 0) 
-        {
-            foreach ($entities as $key => $value) 
-            {
+        if (count($entities) > 0) {
+            foreach ($entities as $key => $value) {
                 $class = $value['class'];
                 $entity = $this->createInstance($class);
-                
-                if (null === $entities)
-                {
+
+                if (null === $entities) {
                     continue;
                 }
-                
+
                 $entity->hydrate($value['value'], $options);
 
-                if ($options['raw']) 
-                {
+                if ($options['raw']) {
                     $this->set($key, $entity);
-                } 
-                else
-                {
+                } else {
                     $this->$key = $entity;
                 }
             }
         }
 
-        if ($options['sync'])
-        {
+        if ($options['sync']) {
             $this->sync();
         }
     }
-    
+
     /**
      * @param array $data
      * @param array $options
+     *
      * @return mixed
      */
     protected function hydrateCollection($data, array $options)
     {
-        if (isset($data['_class']))
-        {   
+        if (isset($data['_class'])) {
             $class = $data['_class'];
             $entity = $this->createInstance($class);
-            
-            if (null === $entity)
-            {
+
+            if (null === $entity) {
                 return null;
             }
-            
+
             $entity->hydrate($data, $options);
-            
+
             $data = $entity;
-        } 
-        else
-        {
-            foreach ($data as $key => &$value)
-            {
-                if (is_array($value))
-                {
+        } else {
+            foreach ($data as $key => &$value) {
+                if (is_array($value)) {
                     $value = $this->hydrateCollection($value, $options);
                 }
             }
@@ -455,54 +413,48 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         $options += [
             'raw' => true,
-            'format' => self::FORMAT_PHP
+            'format' => self::FORMAT_PHP,
         ];
-        
+
         $data = [];
 
-        foreach (array_keys($this->data) as $key)
-        {
-            if (in_array($key, $omitMembers) || (count($members) > 0 && !in_array($key, $members)))
-            {
+        foreach (array_keys($this->data) as $key) {
+            if (in_array($key, $omitMembers) || (count($members) > 0 && !in_array($key, $members))) {
                 continue;
-            } 
-            else 
-            {
+            } else {
                 $value = $options['raw'] ? $this->get($key) : $this->$key;
-                
-                if ($value instanceof EntityInterface) 
-                {
+
+                if ($value instanceof EntityInterface) {
                     $value = $value->export([], [], $options);
-                } 
-                else if (is_array($value))
-                {
+                } elseif (is_array($value)) {
                     $value = $this->exportCollection($value, $options);
                 }
-                
+
                 $data[$key] = $value;
                 $data['_class'] = $this->className;
             }
         }
-        
-        if (isset($options['format']))
-        {
-            $data = $this->{'to' . camelize($options['format'])}($data);
+
+        if (isset($options['format'])) {
+            $data = $this->{'to'.camelize($options['format'])}($data);
         }
-        
+
         return $data;
     }
-    
+
     /**
      * @param array $data
+     *
      * @return array
      */
     protected function formatPHP(array $data)
     {
         return $data;
     }
-    
+
     /**
      * @param array $data
+     *
      * @return string
      */
     protected function formatJSON(array $data)
@@ -513,28 +465,26 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * @param array $data
      * @param array $options
+     *
      * @return array
      */
-    protected function exportCollection(array $data, $options) 
+    protected function exportCollection(array $data, $options)
     {
-        foreach ($data as $key => &$value) 
-        {
-            if (is_array($value)) 
-            {
+        foreach ($data as $key => &$value) {
+            if (is_array($value)) {
                 $value = $this->exportCollection($value, $options);
-            } 
-            else if ($value instanceof EntityInterface)
-            {
+            } elseif ($value instanceof EntityInterface) {
                 $value = $value->export([], [], $options);
             }
         }
 
         return $data;
     }
-    
+
     /**
      * @param string $class
-     * @param array $config
+     * @param array  $config
+     *
      * @return EntityInterface
      */
     protected function createInstance($class, array $config = null)
@@ -545,7 +495,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * @ignore
      */
-    public function __isset($key) 
+    public function __isset($key)
     {
         return $this->has($key);
     }
@@ -553,63 +503,53 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * @ignore
      */
-    public function &__get($key) 
+    public function &__get($key)
     {
-        if (isset(static::$mutatorsGet[$this->className][$key]))
-        {
-            if (false !== static::$mutatorsGet[$this->className][$key]) 
-            {
+        if (isset(static::$mutatorsGet[$this->className][$key])) {
+            if (false !== static::$mutatorsGet[$this->className][$key]) {
                 $get = $this->{static::$mutatorsGet[$this->className][$key]}();
+
                 return $get;
             }
-        } 
-        else 
-        {
-            $method = 'get' . camelize($key);
+        } else {
+            $method = 'get'.camelize($key);
 
-            if (method_exists($this, $method)) 
-            {
+            if (method_exists($this, $method)) {
                 static::$mutatorsGet[$this->className][$key] = $method;
-                
+
                 $get = $this->{$method}();
+
                 return $get;
-            } 
-            else
-            {
+            } else {
                 static::$mutatorsGet[$this->className][$key] = false;
             }
         }
-        
+
         $get = $this->get($key);
+
         return $get;
     }
 
     /**
      * @ignore
      */
-    public function __set($key, $value) 
+    public function __set($key, $value)
     {
-        if (isset(static::$mutatorsSet[$this->className][$key])) 
-        {
-            if (false !== static::$mutatorsSet[$this->className][$key]) 
-            {
+        if (isset(static::$mutatorsSet[$this->className][$key])) {
+            if (false !== static::$mutatorsSet[$this->className][$key]) {
                 $this->{static::$mutatorsSet[$this->className][$key]}($value);
+
                 return;
             }
-        } 
-        else 
-        {
-            $method = 'set' . camelize($key);
+        } else {
+            $method = 'set'.camelize($key);
 
-            if (method_exists($this, $method)) 
-            {
+            if (method_exists($this, $method)) {
                 static::$mutatorsSet[$this->className][$key] = $method;
                 $this->{$method}($value);
 
                 return;
-            } 
-            else
-            {
+            } else {
                 static::$mutatorsSet[$this->className][$key] = false;
             }
         }
@@ -620,19 +560,19 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     /**
      * @ignore
      */
-    public function __unset($key) 
+    public function __unset($key)
     {
         $this->set($key, $this->ignoreValue);
     }
-    
+
     /**
      * @ignore
      */
-    public function jsonSerialize() 
+    public function jsonSerialize()
     {
         return $this->__debugInfo();
     }
-    
+
     /**
      * @ignore
      */
@@ -640,7 +580,7 @@ abstract class EntityAbstract implements EntityInterface, \JsonSerializable
     {
         return [
             'name' => $this->name,
-            'data' => $this->export()
+            'data' => $this->export(),
         ];
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Elixir\DB\Query;
 
-use Elixir\DB\Query\QueryBuilderFactory;
-use Elixir\DB\Query\QueryBuilderInterface;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
@@ -13,18 +10,17 @@ trait QueryBuilderTrait
     /**
      * {@inheritdoc}
      */
-    public function createSelect($table = null) 
+    public function createSelect($table = null)
     {
         $select = QueryBuilderFactory::select($table, $this->getDriver());
 
-        if (method_exists($this, 'quote') && method_exists($select, 'setQuoteMethod')) 
-        {
+        if (method_exists($this, 'quote') && method_exists($select, 'setQuoteMethod')) {
             $select->setQuoteMethod([$this, 'quote']);
         }
 
         return $select;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -32,8 +28,7 @@ trait QueryBuilderTrait
     {
         $insert = QueryBuilderFactory::insert($table, $this->getDriver());
 
-        if (method_exists($this, 'quote') && method_exists($insert, 'setQuoteMethod')) 
-        {
+        if (method_exists($this, 'quote') && method_exists($insert, 'setQuoteMethod')) {
             $insert->setQuoteMethod([$this, 'quote']);
         }
 
@@ -43,12 +38,11 @@ trait QueryBuilderTrait
     /**
      * {@inheritdoc}
      */
-    public function createDelete($table = null) 
+    public function createDelete($table = null)
     {
         $delete = QueryBuilderFactory::delete($table, $this->getDriver());
 
-        if (method_exists($this, 'quote') && method_exists($delete, 'setQuoteMethod')) 
-        {
+        if (method_exists($this, 'quote') && method_exists($delete, 'setQuoteMethod')) {
             $delete->setQuoteMethod([$this, 'quote']);
         }
 
@@ -62,8 +56,7 @@ trait QueryBuilderTrait
     {
         $update = QueryBuilderFactory::update($pTable, $this->getDriver());
 
-        if (method_exists($this, 'quote') && method_exists($update, 'setQuoteMethod'))
-        {
+        if (method_exists($this, 'quote') && method_exists($update, 'setQuoteMethod')) {
             $update->setQuoteMethod([$this, 'quote']);
         }
 
@@ -73,12 +66,11 @@ trait QueryBuilderTrait
     /**
      * {@inheritdoc}
      */
-    public function createTable($table = null) 
+    public function createTable($table = null)
     {
         $create = QueryBuilderFactory::createTable($table, $this->getDriver());
 
-        if (method_exists($this, 'quote') && method_exists($create, 'setQuoteMethod')) 
-        {
+        if (method_exists($this, 'quote') && method_exists($create, 'setQuoteMethod')) {
             $create->setQuoteMethod([$this, 'quote']);
         }
 
@@ -88,12 +80,11 @@ trait QueryBuilderTrait
     /**
      * {@inheritdoc}
      */
-    public function createAlterTable($table = null) 
+    public function createAlterTable($table = null)
     {
         $alter = QueryBuilderFactory::createAlterTable($table, $this->getDriver());
 
-        if (method_exists($this, 'quote') && method_exists($alter, 'setQuoteMethod'))
-        {
+        if (method_exists($this, 'quote') && method_exists($alter, 'setQuoteMethod')) {
             $alter->setQuoteMethod([$this, 'quote']);
         }
 
@@ -103,7 +94,7 @@ trait QueryBuilderTrait
     /**
      * {@inheritdoc}
      */
-    public function createDropTable($table = null) 
+    public function createDropTable($table = null)
     {
         return QueryBuilderFactory::dropTable($table, $this->getDriver());
     }
@@ -111,7 +102,7 @@ trait QueryBuilderTrait
     /**
      * {@inheritdoc}
      */
-    public function createTruncateTable($table = null) 
+    public function createTruncateTable($table = null)
     {
         return QueryBuilderFactory::truncateTable($table, $this->getDriver());
     }

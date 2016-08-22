@@ -2,7 +2,6 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\Column;
 use Elixir\STDLib\MacroableTrait;
 
 /**
@@ -11,54 +10,57 @@ use Elixir\STDLib\MacroableTrait;
 class ColumnFactory
 {
     use MacroableTrait;
-    
+
     /**
      * @param string $name
-     * @param boolean $default
+     * @param bool   $default
+     *
      * @return Column
      */
-    public static function boolean($name, $default = false) 
+    public static function boolean($name, $default = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::TINYINT,
                 'value' => 1,
                 'attribute' => Column::UNSIGNED,
                 'default' => $default ? 1 : 0,
-                'autoIncrement' => false
+                'autoIncrement' => false,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $attribute
-     * @param boolean $autoIncrement
+     * @param int    $length
+     * @param bool   $attribute
+     * @param bool   $autoIncrement
+     *
      * @return Column
      */
     public static function tinyInt($name, $length = 4, $attribute = Column::UNSIGNED, $autoIncrement = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::TINYINT,
                 'value' => $length,
                 'attribute' => $attribute,
-                'autoIncrement' => $autoIncrement
+                'autoIncrement' => $autoIncrement,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $attribute
-     * @param boolean $autoIncrement
+     * @param int    $length
+     * @param bool   $attribute
+     * @param bool   $autoIncrement
+     *
      * @return Column
      */
-    public static function smallInt($name, $length = 6, $attribute = Column::UNSIGNED, $autoIncrement = false) 
+    public static function smallInt($name, $length = 6, $attribute = Column::UNSIGNED, $autoIncrement = false)
     {
         return static::create(
             $name,
@@ -66,136 +68,143 @@ class ColumnFactory
                 'type' => Column::SMALLINT,
                 'value' => $length,
                 'attribute' => $attribute,
-                'autoIncrement' => $autoIncrement
+                'autoIncrement' => $autoIncrement,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $attribute
-     * @param boolean $autoIncrement
+     * @param int    $length
+     * @param bool   $attribute
+     * @param bool   $autoIncrement
+     *
      * @return Column
      */
     public static function mediumInt($name, $length = 9, $attribute = Column::UNSIGNED, $autoIncrement = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::MEDIUMINT,
                 'value' => $length,
                 'attribute' => $attribute,
-                'autoIncrement' => $autoIncrement
+                'autoIncrement' => $autoIncrement,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $attribute
-     * @param boolean $autoIncrement
+     * @param int    $length
+     * @param bool   $attribute
+     * @param bool   $autoIncrement
+     *
      * @return Column
      */
-    public static function int($name, $length = 11, $attribute = Column::UNSIGNED, $autoIncrement = false) 
+    public static function int($name, $length = 11, $attribute = Column::UNSIGNED, $autoIncrement = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::INT,
                 'value' => $length,
                 'attribute' => $attribute,
-                'autoIncrement' => $autoIncrement
+                'autoIncrement' => $autoIncrement,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $attribute
-     * @param boolean $autoIncrement
+     * @param int    $length
+     * @param bool   $attribute
+     * @param bool   $autoIncrement
+     *
      * @return Column
      */
     public static function bigInt($name, $length = 20, $attribute = Column::UNSIGNED, $autoIncrement = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::BIGINT,
                 'value' => $length,
                 'attribute' => $attribute,
-                'autoIncrement' => $autoIncrement
+                'autoIncrement' => $autoIncrement,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param integer $decimal
-     * @param boolean $nullable
+     * @param int    $length
+     * @param int    $decimal
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function float($name, $length = 8, $decimal = 2, $nullable = false) 
+    public static function float($name, $length = 8, $decimal = 2, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::FLOAT,
                 'value' => [$length, $decimal],
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param integer $decimal
-     * @param boolean $nullable
+     * @param int    $length
+     * @param int    $decimal
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function double($name, $length = 8, $decimal = 2, $nullable = false) 
+    public static function double($name, $length = 8, $decimal = 2, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::DOUBLE,
                 'value' => [$length, $decimal],
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
+     *
      * @return Column
      */
     public static function date($name, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::DATE,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param boolean $nullable
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function dateTime($name, $nullable = false) 
+    public static function dateTime($name, $nullable = false)
     {
         return static::create(
             $name,
             [
                 'type' => Column::DATETIME,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
@@ -204,10 +213,11 @@ class ColumnFactory
      * @param string $name
      * @param string $default
      * @param string $attribute
-     * @param boolean $nullable
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function timestamp($name, $default = Column::CURRENT_TIMESTAMP, $attribute = Column::UPDATE_CURRENT_TIMESTAMP, $nullable = false) 
+    public static function timestamp($name, $default = Column::CURRENT_TIMESTAMP, $attribute = Column::UPDATE_CURRENT_TIMESTAMP, $nullable = false)
     {
         return static::create(
             $name,
@@ -215,143 +225,151 @@ class ColumnFactory
                 'type' => Column::TIMESTAMP,
                 'default' => $default,
                 'attribute' => $attribute,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $nullable
+     * @param int    $length
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function char($name, $length = 255, $nullable = false) 
+    public static function char($name, $length = 255, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::CHAR,
                 'value' => $length,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param integer $length
-     * @param boolean $nullable
+     * @param int    $length
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function varchar($name, $length = 255, $nullable = false) 
+    public static function varchar($name, $length = 255, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::VARCHAR,
                 'value' => $length,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param boolean $nullable
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function text($name, $nullable = false) 
+    public static function text($name, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::TEXT,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param boolean $nullable
+     * @param bool   $nullable
+     *
      * @return Column
      */
-    public static function binary($name, $nullable = false) 
+    public static function binary($name, $nullable = false)
     {
         return static::create(
             $name,
             [
                 'type' => Column::BINARY,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param boolean $nullable
+     * @param bool   $nullable
+     *
      * @return Column
      */
     public static function blob($name, $nullable = false)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::BLOB,
-                'nullable' => $nullable
+                'nullable' => $nullable,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param array $values
+     * @param array  $values
      * @param string $default
+     *
      * @return Column
      */
     public static function set($name, array $values, $default = null)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::SET,
                 'value' => $values,
-                'default' => $default
+                'default' => $default,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param array $values
+     * @param array  $values
      * @param string $default
+     *
      * @return Column
      */
-    public static function enum($name, array $values, $default = null) 
+    public static function enum($name, array $values, $default = null)
     {
         return static::create(
-            $name, 
+            $name,
             [
                 'type' => Column::ENUM,
                 'value' => $values,
-                'default' => $default
+                'default' => $default,
             ]
         );
     }
 
     /**
      * @param string $name
-     * @param array $definition
+     * @param array  $definition
+     *
      * @return Column
+     *
      * @throws \InvalidArgumentException
      */
     public static function create($name, array $definition)
     {
         $column = new Column($name);
 
-        if (!isset($definition['type']))
-        {
+        if (!isset($definition['type'])) {
             throw new \InvalidArgumentException(sprintf('The type of "%s" column is not defined.', $name));
         }
 
@@ -359,44 +377,37 @@ class ColumnFactory
         $column->setType($definition['type']);
 
         // Value(s)
-        if (!empty($definition['value'])) 
-        {
+        if (!empty($definition['value'])) {
             $column->setValue($definition['value']);
         }
 
         // Default value
-        if (isset($definition['default']))
-        {
+        if (isset($definition['default'])) {
             $column->setDefault($definition['default']);
         }
 
         // Collating
-        if (!empty($definition['collating']))
-        {
+        if (!empty($definition['collating'])) {
             $column->setCollating($definition['collating']);
         }
 
         // Attribute
-        if (!empty($definition['attribute'])) 
-        {
+        if (!empty($definition['attribute'])) {
             $column->setAttribute($definition['attribute']);
         }
 
         // Nullable
-        if (isset($definition['nullable'])) 
-        {
+        if (isset($definition['nullable'])) {
             $column->setNullable($definition['nullable']);
         }
 
         // Auto increment
-        if (isset($definition['autoIncrement'])) 
-        {
+        if (isset($definition['autoIncrement'])) {
             $column->setAutoIncrement($definition['autoIncrement']);
         }
 
         // Comment
-        if (!empty($definition['comment']))
-        {
+        if (!empty($definition['comment'])) {
             $column->setComment($definition['comment']);
         }
 

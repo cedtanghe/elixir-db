@@ -12,29 +12,30 @@ use Elixir\DB\Query\SQL\CreateTable as BaseCreateTable;
 class CreateTable extends BaseCreateTable
 {
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $ifNotExists = false;
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return CreateTable
      */
     public function ifNotExists($value)
     {
         $this->ifNotExists = $value;
+
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'if_not_exists':
                 $this->ifNotExists(false);
                 break;
@@ -42,48 +43,46 @@ class CreateTable extends BaseCreateTable
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'if_not_exists':
                 return $this->ifNotExists;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'if_not_exists':
                 $this->ifNotExists($data);
                 break;
         }
-        
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render() 
+    public function render()
     {
-        $SQL = 'CREATE ' . "\n";
+        $SQL = 'CREATE '."\n";
         $SQL .= $this->renderTemporary();
-        $SQL .= 'TABLE ' . "\n";
+        $SQL .= 'TABLE '."\n";
         $SQL .= $this->renderIfNotExists();
-        $SQL .= $this->table . ' ' . "\n";
+        $SQL .= $this->table.' '."\n";
         $SQL .= $this->renderColumns();
         $SQL .= $this->renderOptions();
 
@@ -97,9 +96,8 @@ class CreateTable extends BaseCreateTable
     {
         $SQL = '';
 
-        if ($this->ifNotExists) 
-        {
-            $SQL .= 'IF NOT EXISTS ' . "\n";
+        if ($this->ifNotExists) {
+            $SQL .= 'IF NOT EXISTS '."\n";
         }
 
         return $SQL;
@@ -108,53 +106,46 @@ class CreateTable extends BaseCreateTable
     /**
      * {@inheritdoc}
      */
-    protected function renderColumns() 
+    protected function renderColumns()
     {
         $SQL = '(';
         $columns = [];
 
-        foreach ($this->columns as $column)
-        {
+        foreach ($this->columns as $column) {
             // Name
             $col = $column->getName();
 
             // Type
-            $col .= ' ' . $column->getType();
+            $col .= ' '.$column->getType();
             $value = $column->getValue();
 
-            if (null !== $value) 
-            {
-                $col .= '(' . $this->quote($value) . ')';
+            if (null !== $value) {
+                $col .= '('.$this->quote($value).')';
             }
 
             // Attribute
             $attribute = $column->getAttribute();
 
-            if (null !== $attribute) 
-            {
-                $col .= ' ' . $attribute;
+            if (null !== $attribute) {
+                $col .= ' '.$attribute;
             }
 
             // Nullable
-            $col .= ' ' . ($column->isNullable() ? 'NULL' : 'NOT NULL');
+            $col .= ' '.($column->isNullable() ? 'NULL' : 'NOT NULL');
 
             // AutoIncrement
-            if ($column->isAutoIncrement())
-            {
+            if ($column->isAutoIncrement()) {
                 $col .= ' AUTO_INCREMENT ';
                 $found = false;
 
-                foreach ($this->constraints as $constraint) 
-                {
-                    if ($constraint->getType() == Constraint::PRIMARY)
-                    {
+                foreach ($this->constraints as $constraint) {
+                    if ($constraint->getType() == Constraint::PRIMARY) {
                         $found = true;
                         break;
                     }
                 }
 
-                if (!$found) 
-                {
+                if (!$found) {
                     $this->constraint(new Constraint($column->getName(), Constraint::PRIMARY));
                 }
             }
@@ -162,48 +153,40 @@ class CreateTable extends BaseCreateTable
             // Default
             $default = $column->getDefault();
 
-            if (null !== $default) 
-            {
-                if ($default != Column::CURRENT_TIMESTAMP) 
-                {
+            if (null !== $default) {
+                if ($default != Column::CURRENT_TIMESTAMP) {
                     $default = $this->quote($default);
                 }
 
-                $col .= ' DEFAULT ' . $default;
+                $col .= ' DEFAULT '.$default;
             }
 
             $columns[] = $col;
         }
 
-        $SQL .= implode(', ' . "\n", $columns);
+        $SQL .= implode(', '."\n", $columns);
 
         // Constraints
-        foreach ($this->constraints as $constraint)
-        {
+        foreach ($this->constraints as $constraint) {
             $columns = $constraint->getColumns();
 
-            if ($constraint->getType() == Constraint::PRIMARY)
-            {
-                $SQL .= ', ' . "\n" . 'PRIMARY KEY (' . implode(', ', $columns) . ')';
-            } 
-            else if ($constraint->getType() == Constraint::FOREIGN_KEY)
-            {
-                $SQL .= ', ' . "\n" . 'CONSTRAINT ' . $constraint->getName() . ' ';
-                $SQL .= 'FOREIGN KEY (' . $columns[0] . ') ';
-                $SQL .= 'REFERENCES ' . $constraint->getReferenceTable() . '(' . $constraint->getReferenceColumn() . ') ';
-                $SQL .= 'ON DELETE ' . $constraint->getOnDeleteRule() . ' ';
-                $SQL .= 'ON UPDATE ' . $constraint->getOnUpdateRule();
-            } 
-            else
-            {
-                foreach ($columns as $column)
-                {
-                    $SQL .= ', ' . "\n" . $constraint->getType() . ' ' . $column . '(' . $column . ')';
+            if ($constraint->getType() == Constraint::PRIMARY) {
+                $SQL .= ', '."\n".'PRIMARY KEY ('.implode(', ', $columns).')';
+            } elseif ($constraint->getType() == Constraint::FOREIGN_KEY) {
+                $SQL .= ', '."\n".'CONSTRAINT '.$constraint->getName().' ';
+                $SQL .= 'FOREIGN KEY ('.$columns[0].') ';
+                $SQL .= 'REFERENCES '.$constraint->getReferenceTable().'('.$constraint->getReferenceColumn().') ';
+                $SQL .= 'ON DELETE '.$constraint->getOnDeleteRule().' ';
+                $SQL .= 'ON UPDATE '.$constraint->getOnUpdateRule();
+            } else {
+                foreach ($columns as $column) {
+                    $SQL .= ', '."\n".$constraint->getType().' '.$column.'('.$column.')';
                 }
             }
         }
 
-        $SQL .= ') ' . "\n";
+        $SQL .= ') '."\n";
+
         return $SQL;
     }
 }

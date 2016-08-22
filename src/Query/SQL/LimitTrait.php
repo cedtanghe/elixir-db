@@ -2,20 +2,18 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\SQLInterface;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-trait LimitTrait 
+trait LimitTrait
 {
     /**
-     * @var integer 
+     * @var int
      */
     protected $limit;
 
     /**
-     * @var integer 
+     * @var int
      */
     protected $offset;
 
@@ -23,31 +21,35 @@ trait LimitTrait
      * @see LimitOffsetTrait::limit();
      * @see LimitOffsetTrait::offset();
      */
-    public function limitOffset($limit, $offset) 
+    public function limitOffset($limit, $offset)
     {
         $this->limit($limit);
         $this->offset($offset);
-        
+
         return $this;
     }
 
     /**
-     * @param integer $limit
+     * @param int $limit
+     *
      * @return SQLInterface
      */
-    public function limit($limit) 
+    public function limit($limit)
     {
         $this->limit = $limit;
+
         return $this;
     }
 
     /**
-     * @param integer $offset
+     * @param int $offset
+     *
      * @return SQLInterface
      */
     public function offset($offset)
     {
         $this->offset = $offset;
+
         return $this;
     }
 
@@ -58,18 +60,15 @@ trait LimitTrait
     {
         $SQL = '';
 
-        if (null !== $this->limit) 
-        {
-            $SQL .= sprintf('LIMIT %d', $this->limit) . ' ';
+        if (null !== $this->limit) {
+            $SQL .= sprintf('LIMIT %d', $this->limit).' ';
         }
 
-        if (null !== $this->offset) 
-        {
-            $SQL .= sprintf('OFFSET %d', $this->offset) . ' ';
+        if (null !== $this->offset) {
+            $SQL .= sprintf('OFFSET %d', $this->offset).' ';
         }
 
-        if (!empty($SQL)) 
-        {
+        if (!empty($SQL)) {
             $SQL .= "\n";
         }
 

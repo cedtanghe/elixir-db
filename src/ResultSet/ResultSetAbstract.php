@@ -5,7 +5,7 @@ namespace Elixir\DB\ResultSet;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-abstract class ResultSetAbstract implements \Iterator, \Countable  
+abstract class ResultSetAbstract implements \Iterator, \Countable
 {
     /**
      * @var mixed
@@ -32,14 +32,15 @@ abstract class ResultSetAbstract implements \Iterator, \Countable
      * @return mixed
      */
     abstract public function first();
-    
+
     /**
      * @return array
      */
     abstract public function all();
-    
+
     /**
      * @param interger $column
+     *
      * @return mixed
      */
     abstract public function column($column = 0);

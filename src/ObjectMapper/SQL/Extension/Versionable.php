@@ -10,50 +10,45 @@ use Elixir\DB\ObjectMapper\FindEvent;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Versionable implements FindableExtensionInterface 
+class Versionable implements FindableExtensionInterface
 {
     /**
-     * @var FindableInterface 
+     * @var FindableInterface
      */
     protected $findable;
-    
+
     /**
-     * @var ActiveRecordInterface 
+     * @var ActiveRecordInterface
      */
     protected $model;
-    
+
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $addConstraint = true;
-    
+
     /**
      * @param ActiveRecordInterface $model
      */
     public function __construct(ActiveRecordInterface $model)
     {
         $this->model = $model;
-        $this->model->addListener(FindEvent::PARSE_QUERY_FIND, function(FindEvent $e)
-        {
-            if($this->addConstraint)
-            {
+        $this->model->addListener(FindEvent::PARSE_QUERY_FIND, function (FindEvent $e) {
+            if ($this->addConstraint) {
                 $hasContraint = false;
-                
-                foreach ($this->findable->get('where') as $where)
-                {
-                    if (false !== strpos($where, $this->model->getVersionedColumn()))
-                    {
+
+                foreach ($this->findable->get('where') as $where) {
+                    if (false !== strpos($where, $this->model->getVersionedColumn())) {
                         $hasContraint = true;
                     }
                 }
-                
-                if (!$hasContraint)
-                {
+
+                if (!$hasContraint) {
                     $this->findable->where(
                         sprintf(
                             '`%s`.`%s` = ?',
                             $this->model->getStockageName(),
-                            $this->model->getVersionedColumn() 
+                            $this->model->getVersionedColumn()
                         ),
                         $this->model->getCurrentVersion()
                     );
@@ -65,11 +60,11 @@ class Versionable implements FindableExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function setFindable(FindableInterface $value) 
+    public function setFindable(FindableInterface $value)
     {
         $this->findable = $value;
     }
-    
+
     /**
      * @return FindableInterface
      */
@@ -79,32 +74,34 @@ class Versionable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` = ?',
                 $this->model->getStockageName(),
-                $this->model->getVersionedColumn() 
+                $this->model->getVersionedColumn()
             ),
             $value
         );
-        
+
         $this->addConstraint = false;
+
         return $this->findable;
     }
-    
+
     /**
      * @return FindableInterface
      */
     public function unversioned()
     {
         $this->addConstraint = false;
+
         return $this->findable;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRegisteredMethods() 
+    public function getRegisteredMethods()
     {
         return [
             'version',
-            'unversioned'
+            'unversioned',
         ];
     }
 }

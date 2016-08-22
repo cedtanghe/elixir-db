@@ -8,7 +8,6 @@ use Elixir\DB\ObjectMapper\ActiveRecordInterface;
 use Elixir\DB\ObjectMapper\EntityAbstract;
 use Elixir\DB\ObjectMapper\EntityInterface;
 use Elixir\DB\ObjectMapper\RelationInterface;
-use Elixir\DB\ObjectMapper\SQL\Select;
 use Elixir\DB\Query\QueryBuilderInterface;
 use Elixir\DB\Query\SQL\SQLInterface;
 use function Elixir\STDLib\camelize;
@@ -16,25 +15,25 @@ use function Elixir\STDLib\camelize;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInterface 
+abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInterface
 {
     /**
      * @var string
      */
     const DEFAULT_CONNECTION_KEY = 'db.default';
-    
+
     /**
      * @var ConnectionManager
      */
     public static $defaultConnectionManager;
-    
+
     /**
      * @var array
      */
     public static $traitsDefinition = [];
-    
+
     /**
-     * @var boolean
+     * @var bool
      */
     protected $enableInitTraits = true;
 
@@ -54,65 +53,52 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     protected $primaryKey = 'id';
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $autoIncrement = true;
-    
+
     /**
      * @var array
      */
     protected $related = [];
-    
+
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $config = null) 
+    public function __construct(array $config = null)
     {
-        if (isset($config['connection_manager']))
-        {
+        if (isset($config['connection_manager'])) {
             $this->setConnectionManager($config['connection_manager']);
             unset($config['connection_manager']);
         }
-        
+
         parent::__construct($config);
-        
-        if (null === $this->table) 
-        {
+
+        if (null === $this->table) {
             $this->table = lcfirst(pathinfo($this->className, PATHINFO_BASENAME));
         }
-        
-        if ($this->enableInitTraits)
-        {
+
+        if ($this->enableInitTraits) {
             $this->booTraits();
         }
     }
-    
-    /**
-     * @return void
-     */
+
     protected function booTraits()
     {
-        if (isset(static::$traitsDefinition[$this->className]))
-        {
-            if (false !== static::$traitsDefinition[$this->className])
-            {
-                foreach (static::$traitsDefinition[$this->className] as $method)
-                {
+        if (isset(static::$traitsDefinition[$this->className])) {
+            if (false !== static::$traitsDefinition[$this->className]) {
+                foreach (static::$traitsDefinition[$this->className] as $method) {
                     $this->$method();
                 }
             }
-        }
-        else 
-        {
+        } else {
             $methods = [];
             $traits = class_uses($this);
 
-            foreach ($traits as $trait)
-            {
-                $method = 'boot' . $trait;
+            foreach ($traits as $trait) {
+                $method = 'boot'.$trait;
 
-                if (method_exists($this, $method))
-                {
+                if (method_exists($this, $method)) {
                     $this->$method();
                     $methods[] = $method;
                 }
@@ -125,12 +111,11 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     /**
      * {@inheritdoc}
      */
-    public function setConnectionManager(ConnectionManager $value) 
+    public function setConnectionManager(ConnectionManager $value)
     {
         $this->connectionManager = $value;
-        
-        if (null === self::$defaultConnectionManager) 
-        {
+
+        if (null === self::$defaultConnectionManager) {
             self::$defaultConnectionManager = $this->connectionManager;
         }
     }
@@ -138,18 +123,17 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     /**
      * {@inheritdoc}
      */
-    public function getConnectionManager() 
+    public function getConnectionManager()
     {
         return $this->connectionManager ?: self::$defaultConnectionManager;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function getConnection($key = null) 
+    public function getConnection($key = null)
     {
-        if (null === $key || !$this->connectionManager->has($key)) 
-        {
+        if (null === $key || !$this->connectionManager->has($key)) {
             $key = self::DEFAULT_CONNECTION_KEY;
         }
 
@@ -163,23 +147,23 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     {
         return $this->table;
     }
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isAutoIncrement() 
+    public function isAutoIncrement()
     {
         return $this->autoIncrement && null !== $this->primaryKey;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier() 
+    public function getIdentifier()
     {
         return $this->primaryKey;
     }
-    
+
     /**
      * @return array
      */
@@ -190,28 +174,30 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
     /**
      * @param string $key
+     *
      * @return string
      */
-    public function getRelatedType($key) 
+    public function getRelatedType($key)
     {
         return isset($this->related[$key]) ? $this->related[$key] : null;
     }
-    
+
     /**
      * @param string $key
+     *
      * @return RelationInterface
+     *
      * @throws \InvalidArgumentException
      */
     public function related($key)
     {
-        if (array_key_exists($key, $this->related))
-        {
+        if (array_key_exists($key, $this->related)) {
             return $this->get($key);
         }
-        
+
         throw new \InvalidArgumentException(sprintf('Property "%s" is not a relationship.', $key));
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -219,21 +205,18 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     {
         return new Select($this, $options);
     }
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     public function exist()
     {
-        if (null === $this->primaryKey) 
-        {
+        if (null === $this->primaryKey) {
             return false;
         }
 
-        foreach ((array)$this->primaryKey as $key) 
-        {
-            if ($this->ignoreValue === $this->$key)
-            {
+        foreach ((array) $this->primaryKey as $key) {
+            if ($this->ignoreValue === $this->$key) {
                 return false;
             }
         }
@@ -244,7 +227,7 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     /**
      * {@inheritdoc}
      */
-    public function save() 
+    public function save()
     {
         return $this->exist() ? $this->update() : $this->insert();
     }
@@ -252,49 +235,43 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     /**
      * {@inheritdoc}
      */
-    public function insert() 
+    public function insert()
     {
-        if ($this->isReadOnly())
-        {
+        if ($this->isReadOnly()) {
             throw new \LogicException('This model is read-only.');
         }
-        
+
         $event = new ActiveRecordEvent(ActiveRecordEvent::PRE_INSERT);
         $this->dispatch($event);
-        
-        if (!$event->isQueryExecuted())
-        {
+
+        if (!$event->isQueryExecuted()) {
             $data = [];
 
-            foreach ($this->fillable as $column) 
-            {
+            foreach ($this->fillable as $column) {
                 $data[$column] = $this->get($column);
             }
 
             $values = [];
 
-            foreach ($data as $key => $value) 
-            {
-                if ($this->ignoreValue !== $value) 
-                {
-                    $values['`' . $key . '`'] = $value;
+            foreach ($data as $key => $value) {
+                if ($this->ignoreValue !== $value) {
+                    $values['`'.$key.'`'] = $value;
                 }
             }
 
             $DB = $this->getConnection('db.write');
 
-            if (!$DB instanceof QueryBuilderInterface)
-            {
+            if (!$DB instanceof QueryBuilderInterface) {
                 throw new \LogicException(
                     'This class requires the db object implements the interface "\Elixir\DB\Query\QueryBuilderInterface" for convenience.'
                 );
             }
 
-            $query = $DB->createInsert('`' . $this->table . '`');
+            $query = $DB->createInsert('`'.$this->table.'`');
             $query->values($values, SQLInterface::VALUES_SET);
 
             $event = new ActiveRecordEvent(
-                ActiveRecordEvent::PARSE_QUERY_INSERT, 
+                ActiveRecordEvent::PARSE_QUERY_INSERT,
                 ['query' => $query]
             );
 
@@ -303,37 +280,31 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
             $result = $DB->exec($query);
             $result = $result > 0;
-            
-            if ($result) 
-            {
-                if ($this->autoIncrement && null !== $this->primaryKey)
-                {
-                    if (is_array($this->primaryKey))
-                    {
+
+            if ($result) {
+                if ($this->autoIncrement && null !== $this->primaryKey) {
+                    if (is_array($this->primaryKey)) {
                         throw new \LogicException('It is impossible to increment several primary keys.');
                     }
 
                     $this->{$this->primaryKey} = $DB->lastInsertId();
                 }
             }
-        }
-        else
-        {
+        } else {
             $result = $event->isQuerySuccess();
         }
-        
+
         $this->dispatch(
             new ActiveRecordEvent(
-                ActiveRecordEvent::INSERT, 
+                ActiveRecordEvent::INSERT,
                 [
                     'query_executed' => true,
-                    'query_success' => $result
+                    'query_success' => $result,
                 ]
             )
         );
-        
-        if($result)
-        {
+
+        if ($result) {
             $this->sync(self::SYNC_FILLABLE);
         }
 
@@ -342,41 +313,37 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
     /**
      * {@inheritdoc}
+     *
      * @throws \LogicException
      */
-    public function update(array $members = [], array $omitMembers = []) 
+    public function update(array $members = [], array $omitMembers = [])
     {
-        if ($this->isReadOnly()) 
-        {
+        if ($this->isReadOnly()) {
             throw new \LogicException('This model is read-only.');
         }
-        
+
         $event = new ActiveRecordEvent(ActiveRecordEvent::PRE_UPDATE);
         $this->dispatch($event);
-        
-        if (!$event->isQueryExecuted())
-        {
-            if (!$this->isModified(self::SYNC_FILLABLE)) 
-            {
+
+        if (!$event->isQueryExecuted()) {
+            if (!$this->isModified(self::SYNC_FILLABLE)) {
                 $this->dispatch(
                     new ActiveRecordEvent(
-                        ActiveRecordEvent::UPDATE, 
+                        ActiveRecordEvent::UPDATE,
                         [
                             'query_executed' => false,
-                            'query_success' => true
+                            'query_success' => true,
                         ]
                     )
                 );
-                
+
                 return true;
             }
 
             $data = [];
 
-            foreach (array_keys($this->getModified(self::SYNC_FILLABLE)) as $column) 
-            {
-                if (in_array($column, $omitMembers) || (count($members) > 0 && !in_array($column, $members))) 
-                {
+            foreach (array_keys($this->getModified(self::SYNC_FILLABLE)) as $column) {
+                if (in_array($column, $omitMembers) || (count($members) > 0 && !in_array($column, $members))) {
                     continue;
                 }
 
@@ -385,31 +352,27 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
             $values = [];
 
-            foreach ($data as $key => $value)
-            {
-                if ($this->ignoreValue !== $value) 
-                {
-                    $values['`' . $key . '`'] = $value;
+            foreach ($data as $key => $value) {
+                if ($this->ignoreValue !== $value) {
+                    $values['`'.$key.'`'] = $value;
                 }
             }
 
-            if (count($values) == 0) 
-            {
+            if (count($values) == 0) {
                 $this->dispatch(
                     new ActiveRecordEvent(
-                        ActiveRecordEvent::UPDATE, 
+                        ActiveRecordEvent::UPDATE,
                         [
                             'query_executed' => false,
-                            'query_success' => true
+                            'query_success' => true,
                         ]
                     )
                 );
-                
+
                 return true;
             }
 
-            if (!$DB instanceof QueryBuilderInterface)
-            {
+            if (!$DB instanceof QueryBuilderInterface) {
                 throw new \LogicException(
                     'This class requires the db object implements the interface "\Elixir\DB\Query\QueryBuilderInterface" for convenience.'
                 );
@@ -417,21 +380,19 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
             $DB = $this->getConnection('db.write');
 
-            $query = $DB->createUpdate('`' . $this->table . '`');
+            $query = $DB->createUpdate('`'.$this->table.'`');
             $query->set($values, SQLInterface::VALUES_SET);
 
-            if (null === $this->primaryKey) 
-            {
+            if (null === $this->primaryKey) {
                 throw new \LogicException('No primary key is defined');
             }
 
-            foreach ((array)$this->primaryKey as $key)
-            {
+            foreach ((array) $this->primaryKey as $key) {
                 $query->where(sprintf('`%s`.`%s` = ?', $this->table, $key), $this->get($key));
             }
 
             $event = new ActiveRecordEvent(
-                ActiveRecordEvent::PARSE_QUERY_UPDATE, 
+                ActiveRecordEvent::PARSE_QUERY_UPDATE,
                 ['query' => $query]
             );
 
@@ -440,24 +401,21 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
             $result = $DB->exec($query);
             $result = $result > 0;
-        }
-        else
-        {
+        } else {
             $result = $event->isQuerySuccess();
         }
-        
+
         $this->dispatch(
             new ActiveRecordEvent(
-                ActiveRecordEvent::UPDATE, 
+                ActiveRecordEvent::UPDATE,
                 [
                     'query_executed' => true,
-                    'query_success' => $result
+                    'query_success' => $result,
                 ]
             )
         );
-        
-        if($result)
-        {
+
+        if ($result) {
             $this->sync(self::SYNC_FILLABLE);
         }
 
@@ -466,43 +424,39 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
     /**
      * {@inheritdoc}
+     *
      * @throws \LogicException
      */
-    public function delete() 
+    public function delete()
     {
-        if ($this->isReadOnly()) 
-        {
+        if ($this->isReadOnly()) {
             throw new \LogicException('This model is read-only.');
         }
-        
+
         $event = new ActiveRecordEvent(ActiveRecordEvent::PRE_DELETE);
         $this->dispatch($event);
-        
-        if (!$event->isQueryExecuted())
-        {
+
+        if (!$event->isQueryExecuted()) {
             $DB = $this->getConnection('db.write');
 
-            if (!$DB instanceof QueryBuilderInterface)
-            {
+            if (!$DB instanceof QueryBuilderInterface) {
                 throw new \LogicException(
                     'This class requires the db object implements the interface "\Elixir\DB\Query\QueryBuilderInterface" for convenience.'
                 );
             }
 
-            $query = $DB->createDelete('`' . $this->table . '`');
-            
-            if (null === $this->primaryKey) 
-            {
+            $query = $DB->createDelete('`'.$this->table.'`');
+
+            if (null === $this->primaryKey) {
                 throw new \LogicException('No primary key is defined.');
             }
 
-            foreach ((array)$this->primaryKey as $key) 
-            {
+            foreach ((array) $this->primaryKey as $key) {
                 $query->where(sprintf('`%s`.`%s` = ?', $this->table, $key), $this->get($key));
             }
 
             $event = new ActiveRecordEvent(
-                ActiveRecordEvent::PARSE_QUERY_DELETE, 
+                ActiveRecordEvent::PARSE_QUERY_DELETE,
                 ['query' => $query]
             );
 
@@ -511,55 +465,48 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
             $result = $DB->exec($query);
             $result = $result > 0;
-            
-            foreach ($this->data as $key => $value)
-            {
+
+            foreach ($this->data as $key => $value) {
                 $this->set($key, $this->ignoreValue);
             }
-        }
-        else
-        {
+        } else {
             $result = $event->isQuerySuccess();
         }
-        
+
         $this->dispatch(
             new ActiveRecordEvent(
-                ActiveRecordEvent::DELETE, 
+                ActiveRecordEvent::DELETE,
                 [
                     'query_executed' => true,
-                    'query_success' => $result
+                    'query_success' => $result,
                 ]
             )
         );
-        
-        if($result)
-        {
+
+        if ($result) {
             $this->sync(self::SYNC_FILLABLE);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value) 
+    public function set($key, $value)
     {
         parent::set($key, $value);
-        
-        if (array_key_exists($key, $this->related))
-        {
+
+        if (array_key_exists($key, $this->related)) {
             $relation = $this->get($key);
             $relation->setRelated($value, ['filled' => $value !== $this->ignoreValue]);
-            
+
             $this->data[$key] = $relation;
-        } 
-        else if ($value instanceof RelationInterface) 
-        {
+        } elseif ($value instanceof RelationInterface) {
             $this->related[$key] = $value->getType();
         }
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -567,10 +514,10 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     {
         $instance = $class::factory($config);
         $instance->setConnectionManager($this->connectionManager);
-        
+
         return $instance;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -578,64 +525,50 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
     {
         $options += [
             'raw' => true,
-            'format' => self::FORMAT_PHP
+            'format' => self::FORMAT_PHP,
         ];
-        
+
         $data = [];
 
-        foreach (array_keys($this->data) as $key)
-        {
-            if (in_array($key, $omitMembers) || (count($members) > 0 && !in_array($key, $members)))
-            {
+        foreach (array_keys($this->data) as $key) {
+            if (in_array($key, $omitMembers) || (count($members) > 0 && !in_array($key, $members))) {
                 continue;
-            } 
-            else 
-            {
-                if (array_key_exists($key, $this->related))
-                {
-                    if ($v instanceof RelationInterface) 
-                    {
+            } else {
+                if (array_key_exists($key, $this->related)) {
+                    if ($v instanceof RelationInterface) {
                         $v = $v->getRelated();
                     }
-                }
-                else
-                {
+                } else {
                     $v = $options['raw'] ? $this->get($key) : $this->$key;
                 }
-                
-                if ($v instanceof EntityInterface) 
-                {
+
+                if ($v instanceof EntityInterface) {
                     $v = $v->export([], [], $options);
-                } 
-                else if (is_array($v))
-                {
+                } elseif (is_array($v)) {
                     $v = $this->exportCollection($v, $options);
                 }
-                
+
                 $data[$key] = $v;
                 $data['_class'] = $this->className;
             }
         }
-        
-        if (isset($options['format']))
-        {
-            $data = $this->{'to' . camelize($options['format'])}($data);
+
+        if (isset($options['format'])) {
+            $data = $this->{'to'.camelize($options['format'])}($data);
         }
-        
+
         return $data;
     }
-    
+
     /**
      * @ignore
      */
-    public function &__get($key) 
+    public function &__get($key)
     {
         $get = parent::__get($key);
-        
-        if (array_key_exists($key, $this->related))
-        {
-            if (!$get->isFilled()) 
-            {
+
+        if (array_key_exists($key, $this->related)) {
+            if (!$get->isFilled()) {
                 $get->load();
             }
 
@@ -644,50 +577,48 @@ abstract class ModelAbstract extends EntityAbstract implements ActiveRecordInter
 
         return $get;
     }
-    
+
     /**
      * @ignore
      */
-    public function __call($name, $arguments) 
+    public function __call($name, $arguments)
     {
-        if (array_key_exists($name, $this->related))
-        {
+        if (array_key_exists($name, $this->related)) {
             return $this->get($name);
         }
-        
+
         throw new \BadMethodCallException(sprintf('The "%s" method does not exist.', $name));
     }
-    
+
     /**
      * @ignore
      */
-    public function __callStatic($name, $arguments) 
+    public function __callStatic($name, $arguments)
     {
-        if ($name == 'withConfig')
-        {
+        if ($name == 'withConfig') {
             $self = static::factory($arguments);
+
             return $self->find();
         }
-        
+
         $self = static::factory();
+
         return call_user_func_array([$self->find(), $name], $arguments);
     }
-    
+
     /**
      * @ignore
      */
-    public function __clone() 
+    public function __clone()
     {
-        foreach ((array)$this->primaryKey as $key) 
-        {
+        foreach ((array) $this->primaryKey as $key) {
             $this->set($key, $this->ignoreValue);
         }
-        
-        foreach ((array)$this->getRelatedKeys() as $key) 
-        {
+
+        foreach ((array) $this->getRelatedKeys() as $key) {
             $this->set($key, $this->ignoreValue);
         }
-        
+
         $this->sync(self::SYNC_FILLABLE);
     }
 }

@@ -9,7 +9,7 @@ use Elixir\DB\Query\SQL\SQLInterface;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Pivot 
+class Pivot
 {
     /**
      * @var string
@@ -27,13 +27,13 @@ class Pivot
     protected $secondKey;
 
     /**
-     * @var array 
+     * @var array
      */
     protected $criterias = [];
 
     /**
      * @param string $pivot
-     * @param array $config
+     * @param array  $config
      */
     public function __construct($pivot, array $config = [])
     {
@@ -42,14 +42,13 @@ class Pivot
         $config += [
             'first_key' => null,
             'second_key' => null,
-            'criterias' => []
+            'criterias' => [],
         ];
-        
+
         $this->firstKey = $config['first_key'];
         $this->secondKey = $config['second_key'];
 
-        foreach ($config['criterias'] as $criteria)
-        {
+        foreach ($config['criterias'] as $criteria) {
             $this->addCriteria($criteria);
         }
     }
@@ -64,125 +63,131 @@ class Pivot
 
     /**
      * @param string $value
+     *
      * @return Pivot
      */
-    public function setFirstKey($value) 
+    public function setFirstKey($value)
     {
         $this->firstKey = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getFirstKey() 
+    public function getFirstKey()
     {
         return $this->firstKey;
     }
 
     /**
      * @param string $value
+     *
      * @return Pivot
      */
     public function setSecondKey($value)
     {
         $this->secondKey = $value;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getSecondKey() 
+    public function getSecondKey()
     {
         return $this->secondKey;
     }
 
     /**
      * @param callable $criteria
+     *
      * @return Pivot
      */
     public function addCriteria(callable $criteria)
     {
         $this->criterias[] = $criteria;
+
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getCriterias() 
+    public function getCriterias()
     {
         return $this->criterias;
     }
-    
+
     /**
      * @param ConnectionManager $connectionManager
-     * @param mixed $firstValue
-     * @param mixed $secondValue
-     * @return boolean
+     * @param mixed             $firstValue
+     * @param mixed             $secondValue
+     *
+     * @return bool
+     *
      * @throws \LogicException
      */
     public function attach(ConnectionManager $connectionManager, $firstValue, $secondValue)
     {
         $DB = $connectionManager->get('db.write');
-        
-        if (!$DB instanceof QueryBuilderInterface)
-        {
+
+        if (!$DB instanceof QueryBuilderInterface) {
             throw new \LogicException(
                 'This class requires the db object implements the interface "\Elixir\DB\Query\QueryBuilderInterface" for convenience.'
             );
         }
-        
-        try
-        {
-            $query = $DB->createInsert('`' . $this->pivot . '`');
 
-            if (method_exists($query, 'ignore'))
-            {
+        try {
+            $query = $DB->createInsert('`'.$this->pivot.'`');
+
+            if (method_exists($query, 'ignore')) {
                 $query->ignore(true);
             }
-            
+
             $query->values(
                 [
-                    $this->firstKey => $firstValue, 
-                    $this->secondKey => $secondValue
-                ], 
+                    $this->firstKey => $firstValue,
+                    $this->secondKey => $secondValue,
+                ],
                 SQLInterface::VALUES_SET
             );
 
             $result = $DB->exec($query);
+
             return $result > 0;
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return false;
         }
     }
-    
+
     /**
      * @param ConnectionManager $connectionManager
-     * @param mixed $firstValue
-     * @param mixed $secondValue
-     * @return boolean
+     * @param mixed             $firstValue
+     * @param mixed             $secondValue
+     *
+     * @return bool
+     *
      * @throws \LogicException
      */
     public function detach(ConnectionManager $connectionManager, $firstValue, $secondValue)
     {
         $DB = $connectionManager->get('db.write');
-        
-        if (!$DB instanceof QueryBuilderInterface)
-        {
+
+        if (!$DB instanceof QueryBuilderInterface) {
             throw new \LogicException(
                 'This class requires the db object implements the interface "\Elixir\DB\Query\QueryBuilderInterface" for convenience.'
             );
         }
-        
-        $query = $DB->createDelete('`' . $this->pivot . '`');
+
+        $query = $DB->createDelete('`'.$this->pivot.'`');
         $query->where(sprintf('`%s`.`%s` = ?', $this->pivot, $this->firstKey), $firstValue);
         $query->where(sprintf('`%s`.`%s` = ?', $this->pivot, $this->secondKey), $secondValue);
-        
+
         $result = $DB->exec($query);
+
         return $result > 0;
     }
 }

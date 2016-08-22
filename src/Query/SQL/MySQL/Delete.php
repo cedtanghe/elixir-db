@@ -15,25 +15,25 @@ class Delete extends BaseDelete
     use OrderTrait;
     use LimitTrait;
     use JoinTrait;
-    
+
     /**
      * {@inheritdoc}
+     *
      * @throws \LogicException
      */
     public function offset($offset)
     {
         throw new \LogicException('Not implemented in mysql.');
     }
-   
+
     /**
      * {@inheritdoc}
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'join':
                 $this->join = [];
                 break;
@@ -47,14 +47,13 @@ class Delete extends BaseDelete
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'join':
                 return $this->join;
             case 'order':
@@ -62,19 +61,18 @@ class Delete extends BaseDelete
             case 'limit':
                 return $this->limit;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'join':
                 $this->join = array_merge($this->join, $data);
                 break;
@@ -85,17 +83,17 @@ class Delete extends BaseDelete
                 $this->limit($data);
                 break;
         }
-        
+
         return $this;
     }
-   
+
     /**
      * {@inheritdoc}
      */
     public function render()
     {
-        $SQL = 'DELETE FROM ' . "\n";
-        $SQL .= $this->table . ' ' . "\n";
+        $SQL = 'DELETE FROM '."\n";
+        $SQL .= $this->table.' '."\n";
         $SQL .= $this->renderJoin();
         $SQL .= $this->renderSet();
         $SQL .= $this->renderWhere();

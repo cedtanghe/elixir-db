@@ -10,29 +10,30 @@ use Elixir\DB\Query\SQL\DropTable as BaseDropTable;
 class DropTable extends BaseDropTable
 {
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $ifExists = false;
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return DropTable
      */
     public function ifExists($value)
     {
         $this->ifExists = $value;
+
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'if_exists':
                 $this->ifExists(false);
                 break;
@@ -40,60 +41,57 @@ class DropTable extends BaseDropTable
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'if_exists':
                 return $this->ifExists;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'if_exists':
                 $this->ifExists($data);
                 break;
         }
-        
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render() 
+    public function render()
     {
-        $SQL = 'DROP TABLE ' . "\n";
+        $SQL = 'DROP TABLE '."\n";
         $SQL .= $this->renderIfExists();
         $SQL .= $this->table;
-        
+
         return trim($SQL);
     }
 
     /**
      * @return string
      */
-    protected function renderIfExists() 
+    protected function renderIfExists()
     {
         $SQL = '';
 
-        if ($this->ifExists) 
-        {
-            $SQL .= 'IF EXISTS ' . "\n";
+        if ($this->ifExists) {
+            $SQL .= 'IF EXISTS '."\n";
         }
 
         return $SQL;

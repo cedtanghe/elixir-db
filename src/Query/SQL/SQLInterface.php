@@ -2,8 +2,6 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\QueryInterface;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
@@ -68,7 +66,7 @@ interface SQLInterface extends QueryInterface
      * @var string
      */
     const JOIN_RIGHT = 'RIGHT';
-    
+
     /**
      * @var string
      */
@@ -78,7 +76,7 @@ interface SQLInterface extends QueryInterface
      * @var string
      */
     const JOIN_NATURAL = 'NATURAL';
-    
+
     /**
      * @var string
      */
@@ -93,7 +91,7 @@ interface SQLInterface extends QueryInterface
      * @var string
      */
     const ORDER_NONE = null;
-    
+
     /**
      * @var string
      */
@@ -133,19 +131,19 @@ interface SQLInterface extends QueryInterface
      * @var string
      */
     const CHARSET_UTF8 = 'utf8';
-    
+
     /**
-     * @var string 
+     * @var string
      */
     const VALUES_SET = 'set';
-    
+
     /**
-     * @var string 
+     * @var string
      */
     const VALUES_ADD = 'add';
-    
+
     /**
-     * @var string 
+     * @var string
      */
     const VALUES_MERGE = 'merge';
 
@@ -161,13 +159,14 @@ interface SQLInterface extends QueryInterface
 
     /**
      * @param mixed $parameter
+     *
      * @return mixed
      */
     public function quote($parameter);
 
     /**
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function bindValue($key, $value);
 
@@ -178,7 +177,8 @@ interface SQLInterface extends QueryInterface
 
     /**
      * @param string $SQL
-     * @param mixed $param
+     * @param mixed  $param
+     *
      * @return string
      */
     public function assemble($SQL, $param = null);

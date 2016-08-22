@@ -4,8 +4,6 @@ namespace Elixir\DB\ObjectMapper;
 
 use Elixir\DB\ConnectionManager;
 use Elixir\DB\DBInterface;
-use Elixir\DB\ObjectMapper\EntityInterface;
-use Elixir\DB\ObjectMapper\FindInterface;
 use Elixir\Dispatcher\DispatcherInterface;
 
 /**
@@ -17,7 +15,7 @@ interface ActiveRecordInterface extends EntityInterface, FindInterface, Dispatch
      * @return ActiveRecordInterface
      */
     public static function factory(array $config = null);
-    
+
     /**
      * @param ConnectionManager $value
      */
@@ -30,39 +28,41 @@ interface ActiveRecordInterface extends EntityInterface, FindInterface, Dispatch
 
     /**
      * @param string $key
+     *
      * @return DBInterface
      */
     public function getConnection($key = null);
-    
+
     /**
      * @return string
      */
     public function getStockageName();
-    
+
     /**
      * @return mixed
      */
     public function getIdentifier();
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     public function save();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function insert();
 
     /**
      * @param array $members
      * @param array $omitMembers
-     * @return boolean
+     *
+     * @return bool
      */
     public function update(array $members = [], array $omitMembers = []);
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function delete();
 }

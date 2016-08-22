@@ -11,35 +11,35 @@ use Elixir\DB\Query\SQL\Column;
 class AlterTable extends BaseAlterTable
 {
     /**
-     * @var string 
+     * @var string
      */
     const COLLATING = 'collating';
 
     /**
-     * @var string 
+     * @var string
      */
     const AFTER = 'after';
 
     /**
-     * @var string 
+     * @var string
      */
     const FIRST = 'first';
 
     /**
      * {@inheritdoc}
+     *
      * @throws \InvalidArgumentException
      */
-    public function renameColumn($oldColumn, $newColumn) 
+    public function renameColumn($oldColumn, $newColumn)
     {
-        if (!$oldColumn instanceof Column && !$newColumn instanceof Column)
-        {
+        if (!$oldColumn instanceof Column && !$newColumn instanceof Column) {
             throw new \InvalidArgumentException('Mysql requires the definition of the column to rename it.');
         }
 
         $this->SQL[] = [
             'specification' => self::RENAME_COLUMN,
             'old_column' => $oldColumn,
-            'new_column' => $newColumn
+            'new_column' => $newColumn,
         ];
 
         return $this;
@@ -47,15 +47,16 @@ class AlterTable extends BaseAlterTable
 
     /**
      * {@inheritdoc}
+     *
      * @param Column|string $previous
      */
-    public function addColumnAfter(Column $column, $previous) 
+    public function addColumnAfter(Column $column, $previous)
     {
         $this->SQL[] = [
             'specification' => self::ADD_COLUMN,
             'column' => $column,
             'previous' => $previous instanceof Column ? $previous->getName() : $previous,
-            'position' => self::AFTER
+            'position' => self::AFTER,
         ];
 
         return $this;
@@ -64,12 +65,12 @@ class AlterTable extends BaseAlterTable
     /**
      * {@inheritdoc}
      */
-    public function addColumnFirst(Column $column) 
+    public function addColumnFirst(Column $column)
     {
         $this->SQL[] = [
             'specification' => self::ADD_COLUMN,
             'column' => $column,
-            'position' => self::FIRST
+            'position' => self::FIRST,
         ];
 
         return $this;
@@ -77,13 +78,14 @@ class AlterTable extends BaseAlterTable
 
     /**
      * @param string $collating
+     *
      * @return AlterTable
      */
-    public function collating($collating) 
+    public function collating($collating)
     {
         $this->SQL[] = [
             'specification' => self::COLLATING,
-            'collating' => $collating
+            'collating' => $collating,
         ];
 
         return $this;
@@ -91,84 +93,76 @@ class AlterTable extends BaseAlterTable
 
     /**
      * @param string $part
+     *
      * @return AlterTable
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
 
-        switch ($part) 
-        {
+        switch ($part) {
             case 'collating':
                 $i = count($this->SQL);
 
-                while ($i--) 
-                {
+                while ($i--) {
                     $SQL = $this->SQL[$i];
 
-                    if ($SQL['specification'] == self::COLLATING) 
-                    {
+                    if ($SQL['specification'] == self::COLLATING) {
                         array_splice($SQL, $i, 1);
                     }
                 }
                 break;
         }
-        
+
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'collating':
                 $data = [];
-                
-                foreach($this->SQL as $SQL)
-                {
-                    if ($SQL['specification'] == self::COLLATING)
-                    {
+
+                foreach ($this->SQL as $SQL) {
+                    if ($SQL['specification'] == self::COLLATING) {
                         $data[] = $SQL;
                     }
                 }
-                
+
                 return $data;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'collating':
                 $this->SQL = array_merge($this->SQL, $data);
                 break;
         }
-        
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render() 
+    public function render()
     {
         $SQL = [];
 
-        foreach ($this->SQL as $SQL) 
-        {
-            switch ($SQL['specification']) 
-            {
+        foreach ($this->SQL as $SQL) {
+            switch ($SQL['specification']) {
                 case self::ADD_COLUMN:
                     $SQL[] = $this->renderAddColumn($SQL);
                     break;
@@ -193,46 +187,40 @@ class AlterTable extends BaseAlterTable
             }
         }
 
-        if (null !== $this->rename) 
-        {
+        if (null !== $this->rename) {
             $SQL[] = $this->renderRename();
         }
 
-        return implode(';' . "\n", $SQL);
+        return implode(';'."\n", $SQL);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function renderAddColumn($data) 
+    protected function renderAddColumn($data)
     {
         $column = $data['column'];
-        $SQL = 'ALTER TABLE ' . $this->table . ' ADD ';
+        $SQL = 'ALTER TABLE '.$this->table.' ADD ';
 
         // Name
         $SQL .= $column->getName();
 
         // Type
-        $SQL .= ' ' . $column->getType();
+        $SQL .= ' '.$column->getType();
         $value = $column->getValue();
 
-        if (null !== $value) 
-        {
-            $SQL .= '(' . $this->quote($value) . ')';
+        if (null !== $value) {
+            $SQL .= '('.$this->quote($value).')';
         }
 
         // Attribute
         $attribute = $column->getAttribute();
         $updateCurrentTimestamp = false;
 
-        if (null !== $attribute)
-        {
-            if (strtoupper($attribute) != Column::UPDATE_CURRENT_TIMESTAMP)
-            {
-                $SQL .= ' ' . $attribute;
-            } 
-            else
-            {
+        if (null !== $attribute) {
+            if (strtoupper($attribute) != Column::UPDATE_CURRENT_TIMESTAMP) {
+                $SQL .= ' '.$attribute;
+            } else {
                 $updateCurrentTimestamp = true;
             }
         }
@@ -240,68 +228,57 @@ class AlterTable extends BaseAlterTable
         // Collating
         $collating = $column->getCollating();
 
-        if (null !== $collating) 
-        {
+        if (null !== $collating) {
             $pos = strpos($collating, '_');
 
-            if (false !== $pos) 
-            {
-                $SQL .= ' ' . sprintf(
-                    'CHARACTER SET %s COLLATE %s', 
+            if (false !== $pos) {
+                $SQL .= ' '.sprintf(
+                    'CHARACTER SET %s COLLATE %s',
                     substr($collating, 0, strpos($collating, '_')),
                     $collating
                 );
-            } 
-            else 
-            {
-                $SQL .= ' CHARACTER SET ' . $collating;
+            } else {
+                $SQL .= ' CHARACTER SET '.$collating;
             }
         }
 
         // Nullable
-        $SQL .= ' ' . ($column->isNullable() ? 'NULL' : 'NOT NULL');
+        $SQL .= ' '.($column->isNullable() ? 'NULL' : 'NOT NULL');
 
         // AutoIncrement
-        if ($column->isAutoIncrement()) 
-        {
+        if ($column->isAutoIncrement()) {
             $SQL .= ' AUTO_INCREMENT PRIMARY KEY';
         }
 
         // Default
         $default = $column->getDefault();
 
-        if (null !== $default) 
-        {
-            if ($default != Column::CURRENT_TIMESTAMP) 
-            {
+        if (null !== $default) {
+            if ($default != Column::CURRENT_TIMESTAMP) {
                 $default = $this->quote($default);
             }
 
-            $SQL .= ' DEFAULT ' . $default;
+            $SQL .= ' DEFAULT '.$default;
         }
 
-        if ($updateCurrentTimestamp)
-        {
-            $SQL .= ' ' . Column::UPDATE_CURRENT_TIMESTAMP;
+        if ($updateCurrentTimestamp) {
+            $SQL .= ' '.Column::UPDATE_CURRENT_TIMESTAMP;
         }
 
         // Comment
         $comment = $column->getComment();
 
-        if (null !== $comment) 
-        {
-            $SQL .= ' COMMENT ' . $this->quote($comment);
+        if (null !== $comment) {
+            $SQL .= ' COMMENT '.$this->quote($comment);
         }
 
-        if (isset($data['position']))
-        {
-            switch ($data['position']) 
-            {
+        if (isset($data['position'])) {
+            switch ($data['position']) {
                 case self::FIRST:
                     $SQL .= ' FIRST';
                     break;
                 case self::AFTER:
-                    $SQL .= ' AFTER ' . $data['previous'];
+                    $SQL .= ' AFTER '.$data['previous'];
                     break;
             }
         }
@@ -312,35 +289,30 @@ class AlterTable extends BaseAlterTable
     /**
      * {@inheritdoc}
      */
-    protected function renderModifyColumn($data) 
+    protected function renderModifyColumn($data)
     {
         $column = $data['column'];
-        $SQL = 'ALTER TABLE ' . $this->table . ' MODIFY ';
+        $SQL = 'ALTER TABLE '.$this->table.' MODIFY ';
 
         // Name
         $SQL .= $column->getName();
 
         // Type
-        $SQL .= ' ' . $column->getType();
+        $SQL .= ' '.$column->getType();
         $value = $column->getValue();
 
-        if (null !== $value)
-        {
-            $SQL .= '(' . $this->quote($value) . ')';
+        if (null !== $value) {
+            $SQL .= '('.$this->quote($value).')';
         }
-        
+
         // Attribute
         $attribute = $column->getAttribute();
         $updateCurrentTimestamp = false;
 
-        if (null !== $attribute)
-        {
-            if (strtoupper($attribute) != Column::UPDATE_CURRENT_TIMESTAMP) 
-            {
-                $SQL .= ' ' . $attribute;
-            } 
-            else
-            {
+        if (null !== $attribute) {
+            if (strtoupper($attribute) != Column::UPDATE_CURRENT_TIMESTAMP) {
+                $SQL .= ' '.$attribute;
+            } else {
                 $updateCurrentTimestamp = true;
             }
         }
@@ -348,57 +320,48 @@ class AlterTable extends BaseAlterTable
         // Collating
         $collating = $column->getCollating();
 
-        if (null !== $collating)
-        {
+        if (null !== $collating) {
             $pos = strpos($collating, '_');
 
-            if (false !== $pos) 
-            {
-                $SQL .= ' ' . sprintf(
-                    'CHARACTER SET %s COLLATE %s', 
-                    substr($collating, 0, strpos($collating, '_')), 
+            if (false !== $pos) {
+                $SQL .= ' '.sprintf(
+                    'CHARACTER SET %s COLLATE %s',
+                    substr($collating, 0, strpos($collating, '_')),
                     $collating
                 );
-            } 
-            else
-            {
-                $SQL .= ' CHARACTER SET ' . $collating;
+            } else {
+                $SQL .= ' CHARACTER SET '.$collating;
             }
         }
 
         // Nullable
-        $SQL .= ' ' . ($column->isNullable() ? 'NULL' : 'NOT NULL');
+        $SQL .= ' '.($column->isNullable() ? 'NULL' : 'NOT NULL');
 
         // AutoIncrement
-        if ($column->isAutoIncrement()) 
-        {
+        if ($column->isAutoIncrement()) {
             $SQL .= ' AUTO_INCREMENT PRIMARY KEY';
         }
 
         // Default
         $default = $column->getDefault();
 
-        if (null !== $default)
-        {
-            if ($default != Column::CURRENT_TIMESTAMP) 
-            {
+        if (null !== $default) {
+            if ($default != Column::CURRENT_TIMESTAMP) {
                 $default = $this->quote($default);
             }
 
-            $SQL .= ' DEFAULT ' . $default;
+            $SQL .= ' DEFAULT '.$default;
         }
 
-        if ($updateCurrentTimestamp) 
-        {
-            $SQL .= ' ' . Column::UPDATE_CURRENT_TIMESTAMP;
+        if ($updateCurrentTimestamp) {
+            $SQL .= ' '.Column::UPDATE_CURRENT_TIMESTAMP;
         }
 
         // Comment
         $comment = $column->getComment();
 
-        if (null !== $comment) 
-        {
-            $SQL .= ' COMMENT ' . $this->quote($comment);
+        if (null !== $comment) {
+            $SQL .= ' COMMENT '.$this->quote($comment);
         }
 
         return $SQL;
@@ -411,39 +374,31 @@ class AlterTable extends BaseAlterTable
     {
         $column = null;
 
-        if ($data['new_column'] instanceof Column) 
-        {
+        if ($data['new_column'] instanceof Column) {
             $newName = $data['new_column']->getName();
             $column = $data['new_column'];
-        } 
-        else 
-        {
+        } else {
             $newName = $data['new_column'];
         }
 
-        if ($data['old_column'] instanceof Column) 
-        {
+        if ($data['old_column'] instanceof Column) {
             $oldName = $data['old_column']->getName();
 
-            if (null === $column) 
-            {
+            if (null === $column) {
                 $column = $data['old_column'];
             }
-        } 
-        else
-        {
+        } else {
             $oldName = $data['old_column'];
         }
 
-        $SQL = 'ALTER TABLE ' . $this->table . ' CHANGE ' . $oldName . ' ' . $newName;
+        $SQL = 'ALTER TABLE '.$this->table.' CHANGE '.$oldName.' '.$newName;
 
         // Type
-        $SQL .= ' ' . $column->getType();
+        $SQL .= ' '.$column->getType();
         $value = $column->getValue();
 
-        if (null !== $value)
-        {
-            $SQL .= '(' . $this->quote($value) . ')';
+        if (null !== $value) {
+            $SQL .= '('.$this->quote($value).')';
         }
 
         return $SQL;
@@ -454,22 +409,19 @@ class AlterTable extends BaseAlterTable
      */
     protected function renderColating($data)
     {
-        $SQL = 'ALTER TABLE ' . $this->table . ' CONVERT TO ';
+        $SQL = 'ALTER TABLE '.$this->table.' CONVERT TO ';
 
         $collating = $data['collating'];
         $pos = strpos($collating, '_');
 
-        if (false !== $pos) 
-        {
+        if (false !== $pos) {
             $SQL .= sprintf(
-                'CHARACTER SET %s COLLATE %s', 
-                substr($collating, 0, strpos($collating, '_')), 
+                'CHARACTER SET %s COLLATE %s',
+                substr($collating, 0, strpos($collating, '_')),
                 $collating
             );
-        } 
-        else
-        {
-            $SQL .= 'CHARACTER SET ' . $collating;
+        } else {
+            $SQL .= 'CHARACTER SET '.$collating;
         }
 
         return $SQL;

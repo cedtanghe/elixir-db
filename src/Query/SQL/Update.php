@@ -2,49 +2,46 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\SQLAbstract;
-use Elixir\DB\Query\SQL\WhereTrait;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Update extends SQLAbstract 
+class Update extends SQLAbstract
 {
     use WhereTrait;
 
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $raw = false;
 
     /**
-     * @var array 
+     * @var array
      */
     protected $set = [];
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return Update
      */
-    public function raw($value) 
+    public function raw($value)
     {
         $this->raw = $value;
+
         return $this;
     }
-    
+
     /**
-     * @param array $values
+     * @param array  $values
      * @param string $type
+     *
      * @return Update
      */
-    public function set(array $values, $type = self::VALUES_SET) 
+    public function set(array $values, $type = self::VALUES_SET)
     {
-        if ($type == self::VALUES_SET) 
-        {
+        if ($type == self::VALUES_SET) {
             $this->set = $values;
-        } 
-        else 
-        {
+        } else {
             $this->set = array_merge($this->set, $values);
         }
 
@@ -53,12 +50,12 @@ class Update extends SQLAbstract
 
     /**
      * @param string $part
+     *
      * @return Update
      */
-    public function reset($part) 
+    public function reset($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 $this->table = null;
                 break;
@@ -78,15 +75,15 @@ class Update extends SQLAbstract
 
         return $this;
     }
-    
+
     /**
      * @param string $part
+     *
      * @return mixed
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 return $this->table;
             case 'alias':
@@ -98,19 +95,19 @@ class Update extends SQLAbstract
             case 'set':
                 return $this->set;
         }
-        
+
         return null;
     }
-    
+
     /**
-     * @param mixed $data
+     * @param mixed  $data
      * @param string $part
+     *
      * @return Update
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 $this->table($data);
                 break;
@@ -127,7 +124,7 @@ class Update extends SQLAbstract
                 $this->set = array_merge($this->set, $data);
                 break;
         }
-        
+
         return $this;
     }
 
@@ -136,8 +133,8 @@ class Update extends SQLAbstract
      */
     public function render()
     {
-        $SQL = 'UPDATE ' . "\n";
-        $SQL .= $this->table . ' ' . "\n";
+        $SQL = 'UPDATE '."\n";
+        $SQL .= $this->table.' '."\n";
         $SQL .= $this->renderSet();
         $SQL .= $this->renderWhere();
 
@@ -152,17 +149,16 @@ class Update extends SQLAbstract
         $SQL = 'SET ';
         $sets = [];
 
-        foreach ($this->set as $key => $value)
-        {
-            if (!$this->raw) 
-            {
+        foreach ($this->set as $key => $value) {
+            if (!$this->raw) {
                 $value = $this->quote($value);
             }
 
-            $sets[] = $key . ' = ' . $value;
+            $sets[] = $key.' = '.$value;
         }
 
-        $SQL .= implode(', ', $sets) . ' ' . "\n";
+        $SQL .= implode(', ', $sets).' '."\n";
+
         return $SQL;
     }
 }

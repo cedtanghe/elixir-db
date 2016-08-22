@@ -5,20 +5,20 @@ namespace Elixir\DB;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-interface FixtureInterface 
+interface FixtureInterface
 {
     /**
-     * @return integer
+     * @return int
      */
     public function getOrder();
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     public function load();
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     public function unload();
 }

@@ -10,44 +10,47 @@ use Elixir\DB\Query\SQL\DropTable as BaseDropTable;
 class DropTable extends BaseDropTable
 {
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $temporary = false;
 
     /**
-     * @var boolean 
+     * @var bool
      */
     protected $ifExists = false;
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return DropTable
      */
-    public function temporary($value) 
+    public function temporary($value)
     {
         $this->temporary = $value;
+
         return $this;
     }
 
     /**
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return DropTable
      */
     public function ifExists($value)
     {
         $this->ifExists = $value;
+
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function reset($part) 
+    public function reset($part)
     {
         parent::reset($part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'temporary':
                 $this->temporary(false);
                 break;
@@ -58,32 +61,30 @@ class DropTable extends BaseDropTable
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'temporary':
                 return $this->temporary;
             case 'if_exists':
                 return $this->ifExists;
         }
-        
+
         return parent::get($part);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
         parent::merge($data, $part);
-        
-        switch ($part) 
-        {
+
+        switch ($part) {
             case 'temporary':
                 $this->temporary($data);
                 break;
@@ -91,34 +92,33 @@ class DropTable extends BaseDropTable
                 $this->ifExists($data);
                 break;
         }
-        
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render() 
+    public function render()
     {
-        $SQL = 'DROP ' . "\n";
+        $SQL = 'DROP '."\n";
         $SQL .= $this->renderTemporary();
-        $SQL .= 'TABLE ' . "\n";
+        $SQL .= 'TABLE '."\n";
         $SQL .= $this->renderIfExists();
         $SQL .= $this->table;
-        
+
         return trim($SQL);
     }
 
     /**
      * @return string
      */
-    protected function renderTemporary() 
+    protected function renderTemporary()
     {
         $SQL = '';
 
-        if ($this->temporary) 
-        {
-            $SQL .= 'TEMPORARY ' . "\n";
+        if ($this->temporary) {
+            $SQL .= 'TEMPORARY '."\n";
         }
 
         return $SQL;
@@ -127,13 +127,12 @@ class DropTable extends BaseDropTable
     /**
      * @return string
      */
-    protected function renderIfExists() 
+    protected function renderIfExists()
     {
         $SQL = '';
 
-        if ($this->ifExists) 
-        {
-            $SQL .= 'IF EXISTS ' . "\n";
+        if ($this->ifExists) {
+            $SQL .= 'IF EXISTS '."\n";
         }
 
         return $SQL;

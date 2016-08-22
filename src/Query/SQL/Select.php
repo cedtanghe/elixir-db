@@ -2,17 +2,10 @@
 
 namespace Elixir\DB\Query\SQL;
 
-use Elixir\DB\Query\SQL\HavingTrait;
-use Elixir\DB\Query\SQL\JoinTrait;
-use Elixir\DB\Query\SQL\LimitTrait;
-use Elixir\DB\Query\SQL\OrderTrait;
-use Elixir\DB\Query\SQL\SQLAbstract;
-use Elixir\DB\Query\SQL\WhereTrait;
-
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Select extends SQLAbstract 
+class Select extends SQLAbstract
 {
     use JoinTrait;
     use WhereTrait;
@@ -21,61 +14,66 @@ class Select extends SQLAbstract
     use LimitTrait;
 
     /**
-     * @var string 
+     * @var string
      */
     protected $quantifier;
-    
+
     /**
-     * @var array 
+     * @var array
      */
     protected $columns = [];
-    
+
     /**
-     * @var array 
+     * @var array
      */
     protected $group = [];
 
     /**
-     * @var array 
+     * @var array
      */
     protected $combine = [];
-    
+
     /**
      * @param string $quantifier
+     *
      * @return Select
      */
-    public function quantifier($quantifier) 
+    public function quantifier($quantifier)
     {
         $this->quantifier = $quantifier;
+
         return $this;
     }
-    
+
     /**
      * @param array|string $column
-     * @param boolean $reset
+     * @param bool         $reset
+     *
      * @return Select
      */
     public function column($column = self::STAR, $reset = false)
     {
-        if ($reset) 
-        {
+        if ($reset) {
             $this->columns = [];
         }
-        
-        $this->columns = array_merge($this->columns, (array)$column);
+
+        $this->columns = array_merge($this->columns, (array) $column);
+
         return $this;
     }
-    
+
     /**
      * @param array|string $group
+     *
      * @return Select
      */
-    public function group($group) 
+    public function group($group)
     {
-        $this->group = array_merge($this->group, (array)$group);
+        $this->group = array_merge($this->group, (array) $group);
+
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -83,7 +81,7 @@ class Select extends SQLAbstract
     {
         return $this->combine($SQL, self::COMBINE_UNION);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -91,7 +89,7 @@ class Select extends SQLAbstract
     {
         return $this->combine($SQL, self::COMBINE_UNION_ALL);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -99,7 +97,7 @@ class Select extends SQLAbstract
     {
         return $this->combine($SQL, self::COMBINE_EXPECT);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -107,10 +105,11 @@ class Select extends SQLAbstract
     {
         return $this->combine($SQL, self::COMBINE_INTERSECT);
     }
-    
+
     /**
-     * @param array $SQL
+     * @param array  $SQL
      * @param string $type
+     *
      * @return Select
      */
     public function combine(array $SQL, $type = self::COMBINE_UNION)
@@ -123,12 +122,12 @@ class Select extends SQLAbstract
 
     /**
      * @param string $part
+     *
      * @return Select
      */
-    public function reset($part) 
+    public function reset($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 $this->table = null;
                 break;
@@ -169,15 +168,15 @@ class Select extends SQLAbstract
 
         return $this;
     }
-    
+
     /**
      * @param string $part
+     *
      * @return mixed
      */
-    public function get($part) 
+    public function get($part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 return $this->table;
             case 'alias':
@@ -203,19 +202,19 @@ class Select extends SQLAbstract
             case 'combine':
                 return $this->combine;
         }
-        
+
         return null;
     }
-    
+
     /**
-     * @param mixed $data
+     * @param mixed  $data
      * @param string $part
+     *
      * @return Select
      */
-    public function merge($data, $part) 
+    public function merge($data, $part)
     {
-        switch ($part) 
-        {
+        switch ($part) {
             case 'table':
                 $this->table($data);
                 break;
@@ -253,29 +252,26 @@ class Select extends SQLAbstract
                 $this->combine = array_merge($this->combine, $data);
                 break;
         }
-        
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render() 
+    public function render()
     {
         $SQL = '';
 
-        if (count($this->combine) > 0) 
-        {
-            $SQL .= '(' . implode(')' . "\n" . $this->combine['type'] . "\n" . '(', $this->combine['SQL']) . ') ' . "\n";
+        if (count($this->combine) > 0) {
+            $SQL .= '('.implode(')'."\n".$this->combine['type']."\n".'(', $this->combine['SQL']).') '."\n";
             $SQL .= $this->renderOrder();
             $SQL .= $this->renderLimit();
-        } 
-        else
-        {
-            $SQL .= 'SELECT ' . "\n";
+        } else {
+            $SQL .= 'SELECT '."\n";
             $SQL .= $this->renderQuantifier();
             $SQL .= $this->renderColumns();
-            $SQL .= 'FROM ' . $this->table . ' ' . "\n";
+            $SQL .= 'FROM '.$this->table.' '."\n";
             $SQL .= $this->renderJoin();
             $SQL .= $this->renderWhere();
             $SQL .= $this->renderGroup();
@@ -292,9 +288,8 @@ class Select extends SQLAbstract
      */
     protected function renderQuantifier()
     {
-        if (null !== $this->quantifier) 
-        {
-            return $this->quantifier . ' ' . "\n";
+        if (null !== $this->quantifier) {
+            return $this->quantifier.' '."\n";
         }
 
         return '';
@@ -303,32 +298,29 @@ class Select extends SQLAbstract
     /**
      * @return string
      */
-    protected function renderColumns() 
+    protected function renderColumns()
     {
-        if (count($this->columns) > 0) 
-        {
-            return implode(', ', $this->columns) . ' ' . "\n";
+        if (count($this->columns) > 0) {
+            return implode(', ', $this->columns).' '."\n";
         }
 
-        if (preg_match('/as\s+(.+)$/i', $this->table, $matches))
-        {
-            return $matches[1] . '.* ' . "\n";
+        if (preg_match('/as\s+(.+)$/i', $this->table, $matches)) {
+            return $matches[1].'.* '."\n";
         }
 
-        return $this->table . '.* ' . "\n";
+        return $this->table.'.* '."\n";
     }
 
     /**
      * @return string
      */
-    protected function renderGroup() 
+    protected function renderGroup()
     {
         $SQL = '';
 
-        if (count($this->group) > 0)
-        {
+        if (count($this->group) > 0) {
             $SQL .= 'GROUP BY ';
-            $SQL .= implode(', ', $this->group) . ' ' . "\n";
+            $SQL .= implode(', ', $this->group).' '."\n";
         }
 
         return $SQL;

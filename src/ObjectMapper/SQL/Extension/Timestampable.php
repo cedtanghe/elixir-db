@@ -9,18 +9,18 @@ use Elixir\DB\ObjectMapper\FindableInterface;
 /**
  * @author Cédric Tanghe <ced.tanghe@gmail.com>
  */
-class Timestampable implements FindableExtensionInterface 
+class Timestampable implements FindableExtensionInterface
 {
     /**
-     * @var FindableInterface 
+     * @var FindableInterface
      */
     protected $findable;
-    
+
     /**
-     * @var ActiveRecordInterface 
+     * @var ActiveRecordInterface
      */
     protected $model;
-    
+
     /**
      * @param ActiveRecordInterface $model
      */
@@ -32,13 +32,14 @@ class Timestampable implements FindableExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function setFindable(FindableInterface $value) 
+    public function setFindable(FindableInterface $value)
     {
         $this->findable = $value;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
+     * @param int|string|\DateTime $date
+     *
      * @return FindableInterface
      */
     public function createdBefore($date)
@@ -47,16 +48,17 @@ class Timestampable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` < ?',
                 $this->model->getStockageName(),
-                $this->model->getCreatedColumn() 
+                $this->model->getCreatedColumn()
             ),
             $this->convertDate($date)
         );
-        
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
+     * @param int|string|\DateTime $date
+     *
      * @return FindableInterface
      */
     public function updatedBefore($date)
@@ -65,16 +67,17 @@ class Timestampable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` < ?',
                 $this->model->getStockageName(),
-                $this->model->getUpdatedColumn() 
+                $this->model->getUpdatedColumn()
             ),
             $this->convertDate($date)
         );
-        
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
+     * @param int|string|\DateTime $date
+     *
      * @return FindableInterface
      */
     public function createdAfter($date)
@@ -83,16 +86,17 @@ class Timestampable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` > ?',
                 $this->model->getStockageName(),
-                $this->model->getCreatedColumn() 
+                $this->model->getCreatedColumn()
             ),
             $this->convertDate($date)
         );
-        
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
+     * @param int|string|\DateTime $date
+     *
      * @return FindableInterface
      */
     public function updatedAfter($date)
@@ -101,17 +105,18 @@ class Timestampable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` > ?',
                 $this->model->getStockageName(),
-                $this->model->getUpdatedColumn() 
+                $this->model->getUpdatedColumn()
             ),
             $this->convertDate($date)
         );
-        
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $start
-     * @param integer|string|\DateTime $end
+     * @param int|string|\DateTime $start
+     * @param int|string|\DateTime $end
+     *
      * @return FindableInterface
      */
     public function createdBetween($start, $end)
@@ -120,18 +125,19 @@ class Timestampable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` BETWEEN ? AND ?',
                 $this->model->getStockageName(),
-                $this->model->getCreatedColumn() 
+                $this->model->getCreatedColumn()
             ),
             $this->convertDate($start),
             $this->convertDate($end)
         );
-        
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $start
-     * @param integer|string|\DateTime $end
+     * @param int|string|\DateTime $start
+     * @param int|string|\DateTime $end
+     *
      * @return FindableInterface
      */
     public function updatedBetween($start, $end)
@@ -140,39 +146,39 @@ class Timestampable implements FindableExtensionInterface
             sprintf(
                 '`%s`.`%s` BETWEEN ? AND ?',
                 $this->model->getStockageName(),
-                $this->model->getUpdatedColumn() 
+                $this->model->getUpdatedColumn()
             ),
             $this->convertDate($start),
             $this->convertDate($end)
         );
-        
+
         return $this->findable;
     }
-    
+
     /**
-     * @param integer|string|\DateTime $date
-     * @return integer
+     * @param int|string|\DateTime $date
+     *
+     * @return int
      */
     protected function convertDate($date)
     {
-        if ($date instanceof \DateTime)
-        {
+        if ($date instanceof \DateTime) {
             $timestamp = $date->getTimestamp();
+
             return date($this->model->getDeletedFormat(), $timestamp);
-        }
-        else if (is_numeric($date))
-        {
+        } elseif (is_numeric($date)) {
             $timestamp = strtotime($date);
+
             return date($this->model->getDeletedFormat(), $timestamp);
         }
-        
+
         return $date;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRegisteredMethods() 
+    public function getRegisteredMethods()
     {
         return [
             'createdBefore',
@@ -180,7 +186,7 @@ class Timestampable implements FindableExtensionInterface
             'createdAfter',
             'updatedAfter',
             'createdBetween',
-            'updatedBetween'
+            'updatedBetween',
         ];
     }
 }
