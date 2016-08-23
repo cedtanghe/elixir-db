@@ -1,8 +1,7 @@
 {
     "name": "elixir/elixir-db",
     "description": "Component database and ORM",
-    "version": "1.0.0",
-	"minimum-stability": "dev",
+    "minimum-stability": "dev",
     "license": "BSD-3-Clause",
     "keywords": [
         "elixir",
@@ -11,6 +10,86 @@
     ],
     "homepage": "https://github.com/cedtanghe/elixir-db",
     "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-cache"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-classloader"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-config"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-config"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-db"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-di"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-dispatcher"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-filter"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-form"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-helper"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-http"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-i18n"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-kernel"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-mail"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-routing"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-security"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-session"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-stdlib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-validator"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cedtanghe/elixir-view"
+        }
     ],
     "require": {
         "php": ">=5.6",
@@ -31,6 +110,6 @@
         }
     },
     "suggest": {
-        "elixir/elixir-di": "*"
+        "elixir/elixir-di": "If you use ORM implementation"
     }
 }
